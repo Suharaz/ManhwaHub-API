@@ -104,7 +104,15 @@ router.post('/login', authController.login);
  *                   type: string
  *                   example: "Đăng ký người dùng thành công!"
  *       '400':
- *         description: Yêu cầu không hợp lệ. Ví dụ: thiếu trường, email không hợp lệ, mật khẩu quá ngắn
+ *         description: Yêu cầu không hợp lệ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Thiếu trường, email không hợp lệ, mật khẩu quá ngắn"
  *       '500':
  *         description: Lỗi máy chủ nội bộ
  */
