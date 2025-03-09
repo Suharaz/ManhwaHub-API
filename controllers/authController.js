@@ -80,7 +80,7 @@ const login = async (req, res) => {
           exp: user.exp,
           avatar: user.avatar,
           total_point: user.total_point
-        }
+        },rememberToken
       });
   } catch (error) {
       console.error("Login Error:", error);
