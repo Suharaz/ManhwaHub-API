@@ -1,4 +1,3 @@
-
 # Comic Platform API
 
 ## Description

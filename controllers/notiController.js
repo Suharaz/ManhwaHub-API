@@ -16,30 +16,33 @@ exports.getNotiByUser = async (req, res) => {
 
 exports.createNoti = async (req, res) => {
   try {
-    const { userId, title, content } = req.body;
+    const { userId, title, content, type = null, link = null } = req.body;
+
+    // Kiểm tra thông tin bắt buộc
     if (!userId || !title || !content) {
       return res.status(400).json({ message: 'Thiếu thông tin bắt buộc' });
     }
+
+    // Tạo thông báo mới
     const newNotification = await Notification.create({
       userId,
       title,
       content,
+      type, // Chỉ thêm nếu có
+      link, // Chỉ thêm nếu có
       read: false
     });
+
     res.status(201).json({
       message: 'Thông báo đã được tạo thành công',
-      notification: {
-        id: newNotification.id,
-        userId: newNotification.userId,
-        title: newNotification.title,
-        content: newNotification.content,
-        read: newNotification.read
-      }
+      notification: newNotification
     });
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi máy chủ nội bộ' });
+    console.error('Lỗi khi tạo thông báo:', error);
+    res.status(500).json({ message: 'Lỗi máy chủ nội bộ', error: error.message });
   }
 };
+
 
 exports.markNotificationAsRead = async (req, res) => {
   try {
@@ -51,7 +54,7 @@ exports.markNotificationAsRead = async (req, res) => {
     if (notification.userId !== req.user.id) {
       return res.status(403).json({ message: 'Không có quyền truy cập' });
     }
-    await notification.update({ read: true });
+    await notification.update({ status: 1 });
     res.status(200).json({
       message: 'Thông báo đã được đánh dấu là đã đọc',
       notification: {
@@ -59,7 +62,7 @@ exports.markNotificationAsRead = async (req, res) => {
         userId: notification.userId,
         title: notification.title,
         content: notification.content,
-        read: notification.read
+        read: notification.status
       }
     });
   } catch (error) {

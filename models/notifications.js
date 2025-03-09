@@ -21,15 +21,19 @@ Notification.init({
   },
   type: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   content: {
     type: DataTypes.TEXT,
     allowNull: false
   },
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
   status: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: 0,
     field: 'status'
   },
   createdAt: {

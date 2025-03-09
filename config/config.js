@@ -1,4 +1,3 @@
-// This file holds various configuration settings for the application, such as environment variables and application settings.
 
 const config = {
     app: {

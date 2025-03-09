@@ -1,27 +1,27 @@
 const User = require('../models/user');
-const bcrypt = require('bcryptjs'); // Sửa thành bcryptjs theo package.json
-const jwt = require('jsonwebtoken'); // Thêm import jwt
-const crypto = require('crypto'); // Thêm import crypto
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const register = async (req, res) => {
   try {
       const { name, email, password } = req.body;
       if (!name || !email || !password) {
-          return res.status(400).json({ error: "All fields (name, email, password) are required." });
+          return res.status(400).json({ error: "Tất cả các trường (tên, email, mật khẩu) đều là bắt buộc." });
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-          return res.status(400).json({ error: "Invalid email format." });
+          return res.status(400).json({ error: "Định dạng email không hợp lệ." });
       }
 
       if (password.length < 6) {
-          return res.status(400).json({ error: "Password must be at least 6 characters long." });
+          return res.status(400).json({ error: "Mật khẩu phải dài ít nhất 6 ký tự." });
       }
 
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-          return res.status(400).json({ error: "Email already exists. Please use another email." });
+          return res.status(400).json({ error: "Email đã tồn tại. Vui lòng sử dụng email khác." });
       }
 
       const hashedPassword = bcrypt.hashSync(password, 10);
@@ -33,11 +33,11 @@ const register = async (req, res) => {
           password: hashedPassword,
           role_id: 0, // Người dùng thường
       });
-      res.status(201).json({message: "User registered successfully!"});
+      res.status(201).json({message: "Đăng kí thành công"});
 
   } catch (error) {
-      console.error("Error in register:", error);
-      res.status(500).json({ error: "Internal server error." });
+      // console.error("Lỗi đăng kí:", error);
+      res.status(500).json({ error: "Lỗi máy chủ nội bộ." });
   }
 };
 
@@ -45,13 +45,11 @@ const login = async (req, res) => {
   try {
       const { email, password, remember } = req.body;
 
-      // Tìm người dùng theo email
       const user = await User.findOne({ where: { email } });
-      if (!user) return res.status(404).json({ message: "User not found" });
+      if (!user) return res.status(404).json({ message: "Không thấy user" });
 
-      // Kiểm tra mật khẩu (không đồng bộ)
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+      if (!isMatch) return res.status(401).json({ message: "Sai pass" });
 
       // Tạo JWT token
       const jwt_token = jwt.sign({ id: user.id,role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -86,7 +84,7 @@ const login = async (req, res) => {
       });
   } catch (error) {
       console.error("Login Error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
 
@@ -111,24 +109,24 @@ res.status(200).json({ message: "Logged out successfully" });
 return;
   } catch (error) {
       console.error('Logout error:', error);
-      return res.status(500).json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
 
 const refreshToken = async (req, res) => {
   try {
       const token = req.cookies.refresh_token; // Lấy Refresh Token từ cookie
-      if (!token) return res.status(401).json({ message: "No refresh token provided" });
+      if (!token) return res.status(401).json({ message: "Không thấy token " });
 
       const user = await User.findOne({ where: { refresh_token: token } });
-      if (!user) return res.status(401).json({ message: "Invalid refresh token" });
+      if (!user) return res.status(401).json({ message: "Lỗi" });
 
       // 🔹 Tạo JWT mới (hạn 1h)
       const new_jwt = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
       res.json({ new_jwt: new_jwt });
   } catch (error) {
-      return res.status(401).json({ message: "Invalid refresh token" });
+      return res.status(401).json({ message: "Refresh token không hợp lệ" });
   }
 };
 

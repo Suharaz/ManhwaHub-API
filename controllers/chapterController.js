@@ -96,7 +96,6 @@ const deleteChapter = async (req, res) => {
     }
 };
 
-
 const getChapter = async (req, res) => {
     try {
         const { id } = req.params;
@@ -125,7 +124,6 @@ const getChapter = async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error fetching chapter',error });
     }
 };
-
 
 const getListChapter = async (req, res) => {
     try {

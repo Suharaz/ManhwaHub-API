@@ -250,4 +250,13 @@ router.get('/:id/history',authenticate, userController.getHistoryByUser);
  *         description: Lỗi máy chủ nội bộ
  */
 router.post('/:id/history',authenticate, userController.saveHistory);
+
+router.post('/buyChapter', authenticate,userController.buyChapter);
+
+router.post('/depositRequest',authenticate, userController.depositRequest);
+
+router.post('/withdrawRequest',authenticate, userController.withdrawRequest);
+
+router.post('/upExp',authenticate, userController.upExp);
 module.exports = router;
+

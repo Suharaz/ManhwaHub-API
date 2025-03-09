@@ -1,12 +1,11 @@
 const User = require('../models/user');
 const Comic = require('../models/comic');
 const Follow = require('../models/follow');
-const Comment = require('../models/comments');
 const Chapter = require('../models/chapter');
 const History = require('../models/histories');
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto'); 
-const jwt = require('jsonwebtoken');
+const  Transaction  = require('../models/transaction');
+const Purchase = require('../models/purchase');
 
 const getInfo = async (req, res) => {
     try {
@@ -217,11 +216,156 @@ const saveHistory = async (req, res) => {
   }
 };
 
+const buyChapter = async (req, res) => {
+  const { chapter_id} = req.body;
+  const buyer_id = req.user.id;
+
+  try {
+    const existingPurchase = await Purchase.findOne({
+      where: { user_id: buyer_id, chapter_id: chapter_id }
+    });
+
+    if (existingPurchase) {
+      return res.status(400).json({ error: 'You have already purchased this chapter.' });
+    }
+    const chapter = await Chapter.findByPk(chapter_id, {
+      attributes: ['id', 'name', 'price', 'user_id']
+    });
+    if (!chapter) {
+      return res.status(404).json({ error: 'Chapter not found' });
+    }
+
+    // Lấy thông tin người mua và tác giả
+    const buyer = await User.findByPk(buyer_id, {
+      attributes: ['id', 'total_point'] 
+    });
+    const author = await User.findByPk(chapter.user_id, {
+      attributes: ['id', 'total_point']
+    });
+    
+    if (!buyer || !author) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Kiểm tra số dư người mua
+    if (buyer.total_point < chapter.price) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // Trừ tiền người mua
+    buyer.total_point -= chapter.price;
+    await buyer.save();
+
+    // Cộng tiền cho tác giả
+    author.total_point += chapter.price;
+    await author.save();
+
+    // Lưu giao dịch vào bảng transactions
+    await Transaction.create({
+      user_id: buyer_id,
+      type: 'purchase',
+      amount: chapter.price,
+      status: 'completed',
+      description: `Purchased chapter ${chapter_id}`
+    });
+
+    await Purchase.create({
+      user_id: buyer_id,
+      chapter_id: chapter_id,
+      created_at: new Date()
+    });
+    
+
+    return res.status(200).json({ message: 'Chapter purchased successfully' });
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+const depositRequest = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const user_id=req.user.id
+
+    if (amount <= 0) {
+      return res.status(400).json({ error: "Số tiền phải lớn hơn 0." });
+    }
+
+    const user = await User.findByPk(user_id, {
+      attributes: ["id", "name"], 
+    });
+    if (!user) {
+      return res.status(404).json({ error: "Người dùng không tồn tại." });
+    }
+    const transaction = await Transaction.create({
+      user_id: user_id,
+      type: "deposit",
+      amount: amount,
+      status: "pending", // Chờ xác nhận
+      description: `Yêu cầu nạp tiền từ ${user.name}`,
+    });
+
+    res.status(200).json({ message: "Yêu cầu nạp tiền đã được tạo. Vui lòng chờ xác nhận!", transaction });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const withdrawRequest = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const user_id = req.user.id; 
+
+    if (!amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ error: "Số tiền phải là một số dương hợp lệ." });
+    }
+    const user = await User.findByPk(user_id, { attributes: ["id", "total_point"] });
+
+    if (user.total_point < amount) {
+      return res.status(400).json({ error: "Số dư không đủ để rút tiền." });
+    }
+
+    const transaction = await Transaction.create({
+      user_id,
+      type: "withdraw",
+      amount: parseFloat(amount), 
+      status: "pending", 
+      description: "Yêu cầu rút tiền",
+    });
+
+    res.status(200).json({ message: "Yêu cầu rút tiền đã được tạo. Vui lòng chờ xác nhận!", transaction });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const upExp = async (req, res) => {
+  try {
+    const user_id = req.user.id; 
+
+    const user = await User.findByPk(user_id, {
+      attributes: ["id", "exp"],
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Người dùng không tồn tại." });
+    }
+    user.exp += 5;
+    await user.save();
+
+    res.status(200).json({ message: "Đã cộng 5 EXP!", newExp: user.exp });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = { 
   getInfo,
   updateUser, 
   deleteUser, 
   getFollowByUser, 
   getHistoryByUser,
-  saveHistory
+  saveHistory,
+  buyChapter,depositRequest,withdrawRequest,upExp
 };
