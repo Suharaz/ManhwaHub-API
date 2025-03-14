@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: localhost
--- Thời gian đã tạo: Th3 09, 2025 lúc 12:17 PM
+-- Thời gian đã tạo: Th3 14, 2025 lúc 07:30 PM
 -- Phiên bản máy phục vụ: 10.11.10-MariaDB-log
 -- Phiên bản PHP: 8.3.15
 
@@ -425,6 +425,16 @@ CREATE TABLE `comic_authors` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `comic_authors`
+--
+
+INSERT INTO `comic_authors` (`id`, `comic_id`, `author_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2025-03-14 11:27:16', '2025-03-14 11:27:16'),
+(2, 2, 2, '2025-03-14 11:27:16', '2025-03-14 11:27:16'),
+(3, 3, 3, '2025-03-14 11:27:16', '2025-03-14 11:27:16'),
+(4, 165, 5, '2025-03-14 11:27:16', '2025-03-14 11:27:16');
+
 -- --------------------------------------------------------
 
 --
@@ -439,6 +449,18 @@ CREATE TABLE `comic_categories` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `comic_categories`
+--
+
+INSERT INTO `comic_categories` (`id`, `comic_id`, `category_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2025-03-14 11:27:05', '2025-03-14 11:27:05'),
+(2, 1, 3, '2025-03-14 11:27:05', '2025-03-14 11:27:05'),
+(3, 2, 1, '2025-03-14 11:27:05', '2025-03-14 11:27:05'),
+(4, 2, 2, '2025-03-14 11:27:05', '2025-03-14 11:27:05'),
+(5, 165, 7, '2025-03-14 11:27:05', '2025-03-14 11:27:05'),
+(6, 165, 10, '2025-03-14 11:27:05', '2025-03-14 11:27:05');
+
 -- --------------------------------------------------------
 
 --
@@ -452,6 +474,15 @@ CREATE TABLE `comic_translators` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `comic_translators`
+--
+
+INSERT INTO `comic_translators` (`id`, `comic_id`, `translator_id`, `created_at`, `updated_at`) VALUES
+(5, 1, 1, '2025-03-14 11:26:54', '2025-03-14 11:26:54'),
+(6, 2, 1, '2025-03-14 11:26:54', '2025-03-14 11:26:54'),
+(7, 50, 1, '2025-03-14 11:26:54', '2025-03-14 11:26:54');
 
 -- --------------------------------------------------------
 
@@ -479,31 +510,30 @@ CREATE TABLE `comments` (
 --
 
 INSERT INTO `comments` (`id`, `content`, `status`, `comic_id`, `chapter_id`, `user_id`, `parent_id`, `total_like`, `total_dislike`, `total_report`, `created_at`, `updated_at`) VALUES
-(63, 'Truyện này thật sự quá hay!', 1, 724, '100201', 151, NULL, 10, 0, 1, '2025-02-21 04:52:12', '2025-02-21 04:52:12'),
-(65, 'Tôi thấy chương này hơi nhàm.', 0, 724, '102300', 85, NULL, 3, 5, 1, '2025-02-16 04:52:12', '2025-02-16 04:52:12'),
-(66, 'Cốt truyện cuốn hút quá.', 1, 724, '103400', 151, NULL, 12, 1, 0, '2025-03-03 04:52:12', '2025-03-03 04:52:12'),
-(67, 'Tôi thích nhân vật phản diện!', 1, 724, '101800', 148, 63, 5, 0, 2, '2025-03-01 04:52:12', '2025-03-01 04:52:12'),
-(68, 'Chương này hơi ngắn nhỉ?', 0, 724, '100600', 85, 3, 4, 1, 0, '2025-02-22 04:52:12', '2025-02-22 04:52:12'),
-(69, 'Hóng chương tiếp theo quá!', 1, 724, '103900', 151, NULL, 18, 0, 0, '2025-03-05 04:52:12', '2025-03-05 04:52:12'),
-(70, 'Tác giả thật sáng tạo!', 1, 724, '100150', 148, NULL, 9, 1, 0, '2025-02-27 04:52:12', '2025-02-27 04:52:12'),
-(71, 'Chương này nhiều thoại ghê.', 0, 724, '102750', 85, 7, 2, 3, 1, '2025-02-11 04:52:12', '2025-02-11 04:52:12'),
-(72, 'Bình luận này để kiểm tra.', 0, 724, '100999', 151, NULL, 1, 0, 0, '2025-02-06 04:52:12', '2025-02-06 04:52:12'),
-(73, 'Nhân vật chính bá đạo quá!', 1, 724, '101250', 148, NULL, 20, 0, 0, '2025-03-06 04:52:12', '2025-03-06 04:52:12'),
-(74, 'Mình thích phong cách vẽ.', 1, 724, '103123', 85, 63, 7, 0, 0, '2025-02-18 04:52:12', '2025-02-18 04:52:12'),
-(76, 'Chương này cảm động quá.', 1, 724, '101920', 148, 13, 10, 0, 1, '2025-02-24 04:52:12', '2025-02-24 04:52:12'),
-(77, 'Tôi thích phản diện hơn chính diện.', 0, 724, '102480', 85, 15, 3, 2, 0, '2025-02-14 04:52:12', '2025-02-14 04:52:12'),
-(78, 'Không biết bao giờ ra chương mới!', 1, 724, '103950', 151, NULL, 17, 1, 0, '2025-02-28 04:52:12', '2025-02-28 04:52:12'),
-(79, 'Ai thích nhân vật phụ không?', 1, 724, '100123', 148, NULL, 6, 0, 0, '2025-02-25 04:52:12', '2025-02-25 04:52:12'),
-(80, 'Bối cảnh truyện rất đẹp.', 1, 724, '101345', 85, 17, 4, 1, 0, '2025-02-08 04:52:12', '2025-02-08 04:52:12'),
-(81, 'Tác giả spoil trước hơi nhiều.', 0, 724, '102987', 151, NULL, 2, 5, 1, '2025-02-20 04:52:12', '2025-02-20 04:52:12'),
-(82, 'Chương mới có gì hot không?', 1, 724, '104000', 148, 19, 9, 0, 0, '2025-03-04 04:52:12', '2025-03-04 04:52:12'),
-(83, '<p><img src=\"http://4.bp.blogspot.com/_1Jw2fzSntT0/TZDLBB9cMqI/AAAAAAAABPo/aEOUmUAfhNY/w1600/001.gif\" alt=\"emo\" /></p>', 0, 724, NULL, 151, NULL, 0, 0, 0, '2025-03-08 09:26:33', '2025-03-08 09:26:33'),
-(84, '<p><img src=\"http://4.bp.blogspot.com/_1Jw2fzSntT0/TZDLBB9cMqI/AAAAAAAABPo/aEOUmUAfhNY/w1600/001.gif\" alt=\"emo\" /></p>', 0, 724, NULL, 151, NULL, 0, 0, 0, '2025-03-08 09:28:57', '2025-03-08 09:28:57'),
-(85, '<p><img src=\"http://4.bp.blogspot.com/_1Jw2fzSntT0/TZDLBB9cMqI/AAAAAAAABPo/aEOUmUAfhNY/w1600/001.gif\" alt=\"emo\" /></p>', 0, 724, NULL, 151, NULL, 0, 0, 0, '2025-03-08 09:29:49', '2025-03-08 09:29:49'),
-(86, '<p><i</p>', 0, 723, NULL, 151, NULL, 0, 0, 0, '2025-03-08 09:30:52', '2025-03-08 09:30:52'),
-(87, '<p><i</p>', 0, 724, NULL, 151, 85, 0, 0, 0, '2025-03-08 09:32:52', '2025-03-08 09:32:52'),
-(88, '<p><i</p>', 0, 724, NULL, 151, 85, 0, 0, 0, '2025-03-08 09:33:53', '2025-03-08 09:33:53'),
-(89, '<p><i</p>', 0, 724, NULL, 151, 83, 0, 0, 0, '2025-03-08 09:35:47', '2025-03-08 09:35:47');
+(63, 'Truyện này thật sự quá hay!', 1, 49, '34', 151, NULL, 10, 0, 1, '2025-02-21 04:52:12', '2025-02-21 04:52:12'),
+(65, 'Tôi thấy chương này hơi nhàm.', 0, 129, '90', 85, NULL, 3, 5, 1, '2025-02-16 04:52:12', '2025-02-16 04:52:12'),
+(66, 'Cốt truyện cuốn hút quá.', 1, 27, '9', 151, NULL, 12, 1, 0, '2025-03-03 04:52:12', '2025-03-03 04:52:12'),
+(67, 'Tôi thích nhân vật phản diện!', 1, 161, '60', 148, 63, 5, 0, 2, '2025-03-01 04:52:12', '2025-03-01 04:52:12'),
+(68, 'Chương này hơi ngắn nhỉ?', 0, 10, '50', 85, 3, 4, 1, 0, '2025-02-22 04:52:12', '2025-02-22 04:52:12'),
+(69, 'Hóng chương tiếp theo quá!', 1, 54, '13', 151, NULL, 18, 0, 0, '2025-03-05 04:52:12', '2025-03-05 04:52:12'),
+(70, 'Tác giả thật sáng tạo!', 1, 112, '98', 148, NULL, 9, 1, 0, '2025-02-27 04:52:12', '2025-02-27 04:52:12'),
+(71, 'Chương này nhiều thoại ghê.', 0, 142, '36', 85, 7, 2, 3, 1, '2025-02-11 04:52:12', '2025-02-11 04:52:12'),
+(72, 'Bình luận này để kiểm tra.', 0, 38, '5', 151, NULL, 1, 0, 0, '2025-02-06 04:52:12', '2025-02-06 04:52:12'),
+(73, 'Nhân vật chính bá đạo quá!', 1, 95, '72', 148, NULL, 20, 0, 0, '2025-03-06 04:52:12', '2025-03-06 04:52:12'),
+(74, 'Mình thích phong cách vẽ.', 1, 140, '9', 85, 63, 7, 0, 0, '2025-02-18 04:52:12', '2025-02-18 04:52:12'),
+(76, 'Chương này cảm động quá.', 1, 146, '18', 148, 13, 10, 0, 1, '2025-02-24 04:52:12', '2025-02-24 04:52:12'),
+(77, 'Tôi thích phản diện hơn chính diện.', 0, 35, '53', 85, 15, 3, 2, 0, '2025-02-14 04:52:12', '2025-02-14 04:52:12'),
+(78, 'Không biết bao giờ ra chương mới!', 1, 3, '51', 151, NULL, 17, 1, 0, '2025-02-28 04:52:12', '2025-02-28 04:52:12'),
+(79, 'Ai thích nhân vật phụ không?', 1, 74, '74', 148, NULL, 6, 0, 0, '2025-02-25 04:52:12', '2025-02-25 04:52:12'),
+(80, 'Bối cảnh truyện rất đẹp.', 1, 59, '56', 85, 17, 4, 1, 0, '2025-02-08 04:52:12', '2025-02-08 04:52:12'),
+(81, 'Tác giả spoil trước hơi nhiều.', 0, 116, '86', 151, NULL, 2, 5, 1, '2025-02-20 04:52:12', '2025-02-20 04:52:12'),
+(82, 'Chương mới có gì hot không?', 1, 28, '27', 148, 19, 9, 0, 0, '2025-03-04 04:52:12', '2025-03-04 04:52:12'),
+(83, '<p><img src=\"http://4.bp.blogspot.com/_1Jw2fzSntT0/TZDLBB9cMqI/AAAAAAAABPo/aEOUmUAfhNY/w1600/001.gif\" alt=\"emo\" /></p>', 0, 137, '34', 151, NULL, 0, 0, 0, '2025-03-08 09:26:33', '2025-03-08 09:26:33'),
+(84, '<p><img src=\"http://4.bp.blogspot.com/_1Jw2fzSntT0/TZDLBB9cMqI/AAAAAAAABPo/aEOUmUAfhNY/w1600/001.gif\" alt=\"emo\" /></p>', 0, 35, '3', 151, NULL, 0, 0, 0, '2025-03-08 09:28:57', '2025-03-08 09:28:57'),
+(85, '<p><img src=\"http://4.bp.blogspot.com/_1Jw2fzSntT0/TZDLBB9cMqI/AAAAAAAABPo/aEOUmUAfhNY/w1600/001.gif\" alt=\"emo\" /></p>', 0, 82, '39', 151, NULL, 0, 0, 0, '2025-03-08 09:29:49', '2025-03-08 09:29:49'),
+(87, '<p><i</p>', 0, 79, '20', 151, 85, 0, 0, 0, '2025-03-08 09:32:52', '2025-03-08 09:32:52'),
+(88, '<p><i</p>', 0, 94, '25', 151, 85, 0, 0, 0, '2025-03-08 09:33:53', '2025-03-08 09:33:53'),
+(89, '<p><i</p>', 0, 84, '82', 151, 83, 0, 0, 0, '2025-03-08 09:35:47', '2025-03-08 09:35:47');
 
 -- --------------------------------------------------------
 
@@ -524,12 +554,12 @@ CREATE TABLE `follows` (
 --
 
 INSERT INTO `follows` (`id`, `user_id`, `comic_id`, `created_at`, `updated_at`) VALUES
-(22, 151, 1588, '2025-01-18 20:29:05', '2025-01-18 20:29:05'),
-(23, 151, 1663, '2025-01-18 21:09:13', '2025-01-18 21:09:13'),
-(25, 151, 1562, '2025-01-18 21:10:12', '2025-01-18 21:10:12'),
-(26, 151, 1475, '2025-01-18 21:10:27', '2025-01-18 21:10:27'),
-(27, 151, 918, '2025-01-18 21:10:34', '2025-01-18 21:10:34'),
-(988, 151, 723, '2025-03-08 02:30:14', '2025-03-08 02:30:14');
+(22, 151, 47, '2025-01-18 20:29:05', '2025-01-18 20:29:05'),
+(23, 151, 83, '2025-01-18 21:09:13', '2025-01-18 21:09:13'),
+(25, 151, 108, '2025-01-18 21:10:12', '2025-01-18 21:10:12'),
+(26, 151, 124, '2025-01-18 21:10:27', '2025-01-18 21:10:27'),
+(27, 151, 130, '2025-01-18 21:10:34', '2025-01-18 21:10:34'),
+(988, 151, 115, '2025-03-08 02:30:14', '2025-03-08 02:30:14');
 
 -- --------------------------------------------------------
 
@@ -552,8 +582,8 @@ CREATE TABLE `histories` (
 --
 
 INSERT INTO `histories` (`id`, `user_id`, `comic_id`, `story_id`, `list_chapter`, `created_at`, `updated_at`) VALUES
-(30, 151, 1737, NULL, '[99999,2123]', '2025-01-18 20:22:35', '2025-03-07 16:35:31'),
-(31, 151, 1588, NULL, '84474,103075,103253,103255,103256,103258,103260,103259,103257', '2025-01-18 20:29:20', '2025-01-19 00:06:26');
+(30, 151, 12, NULL, '[1, 2, 3]', '2025-01-18 20:22:35', '2025-03-07 16:35:31'),
+(31, 151, 65, NULL, '[1, 2, 3]', '2025-01-18 20:29:20', '2025-01-19 00:06:26');
 
 -- --------------------------------------------------------
 
@@ -572,6 +602,13 @@ CREATE TABLE `notifications` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `user_id`, `title`, `content`, `type`, `link`, `status`, `created_at`, `updated_at`) VALUES
+(197, 151, 'Chương mới của Shadow Realm', 'Chapter 2 đã ra mắt!', 'user', '/comic/shadow-realm-8800/chapter-2', b'0', '2025-03-14 11:20:28', '2025-03-14 11:20:28');
 
 -- --------------------------------------------------------
 
@@ -663,6 +700,14 @@ CREATE TABLE `pricelists` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `pricelists`
+--
+
+INSERT INTO `pricelists` (`id`, `name`, `price`, `number_of_coins`, `created_at`, `updated_at`) VALUES
+(1, 'Gói cơ bản', 1.99, 100.00, '2025-03-14 11:20:40', '2025-03-14 11:20:40'),
+(2, 'Gói cao cấp', 4.99, 500.00, '2025-03-14 11:20:40', '2025-03-14 11:20:40');
+
 -- --------------------------------------------------------
 
 --
@@ -683,45 +728,7 @@ CREATE TABLE `purchases` (
 --
 
 INSERT INTO `purchases` (`id`, `user_id`, `chapter_id`, `type`, `created_at`, `updated_at`) VALUES
-(1, 151, 40912, NULL, '2025-03-09 03:23:56', NULL);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `roles`
---
-
-CREATE TABLE `roles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(191) NOT NULL,
-  `guard_name` varchar(191) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `roles`
---
-
-INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
-(1, 'Super Admin', 'web', '2025-01-08 11:34:58', '2025-01-08 11:34:58'),
-(2, 'Admin', 'web', '2025-01-08 11:34:59', '2025-01-08 11:34:59'),
-(3, 'User', 'web', '2025-01-08 11:34:59', '2025-01-08 11:34:59'),
-(4, 'Tester', 'web', '2025-02-09 20:48:41', '2025-02-09 20:48:41');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `themes`
---
-
-CREATE TABLE `themes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `footer` text DEFAULT NULL,
-  `header` text DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+(1, 151, 5, NULL, '2025-03-09 03:23:56', NULL);
 
 -- --------------------------------------------------------
 
@@ -746,15 +753,15 @@ CREATE TABLE `transactions` (
 
 INSERT INTO `transactions` (`id`, `user_id`, `type`, `amount`, `status`, `description`, `created_at`, `updated_at`) VALUES
 (1, 148, 'deposit', 237.28, 'pending', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:31:07'),
-(2, 4, 'withdraw', 150.89, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(3, 5, 'purchase', 231.44, 'failed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(4, 9, 'deposit', 39.26, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(5, 8, 'withdraw', 163.07, 'pending', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(6, 5, 'purchase', 244.90, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(7, 10, 'deposit', 185.44, 'failed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(8, 10, 'withdraw', 319.27, 'pending', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(9, 4, 'purchase', 397.23, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
-(10, 10, 'deposit', 173.90, 'failed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-09 02:24:00'),
+(2, 148, 'withdraw', 150.89, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(3, 148, 'purchase', 231.44, 'failed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(4, 148, 'deposit', 39.26, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(5, 148, 'withdraw', 163.07, 'pending', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(6, 148, 'purchase', 244.90, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(7, 148, 'deposit', 185.44, 'failed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(8, 148, 'withdraw', 319.27, 'pending', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(9, 148, 'purchase', 397.23, 'completed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
+(10, 148, 'deposit', 173.90, 'failed', 'Test transaction', '2025-03-09 02:24:00', '2025-03-14 11:21:57'),
 (12, 151, 'deposit', 10000.00, 'pending', 'Yêu cầu nạp tiền', '2025-03-09 03:14:44', '2025-03-09 03:14:44'),
 (13, 151, 'deposit', 10000.00, 'pending', 'Yêu cầu nạp tiền từ Bakâa', '2025-03-09 03:17:19', '2025-03-09 03:17:19'),
 (14, 151, 'purchase', 100.00, 'completed', 'Purchased chapter 40912', '2025-03-09 03:19:31', '2025-03-09 03:19:31'),
@@ -785,7 +792,8 @@ CREATE TABLE `translators` (
 --
 
 INSERT INTO `translators` (`id`, `name`, `slug`, `description`, `thumbnail`, `title_seo`, `meta_keywords`, `meta_description`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'Scan Translation', 'scan-translation', '<p><br></p>', NULL, 'Scan Translation Group', 'Scan Translation Group', 'Scan Translation Group', 1, '2025-02-09 15:10:00', '2025-02-09 15:10:00');
+(1, 'Scan Translation', 'scan-translation', '<p><br></p>', NULL, 'Scan Translation Group', 'Scan Translation Group', 'Scan Translation Group', 1, '2025-02-09 15:10:00', '2025-02-09 15:10:00'),
+(2, 'FanSub VN', 'fansub-vn', 'Nhóm dịch manga tiếng Việt', 'https://picsum.photos/200/300', 'FanSub VN', 'manga, dịch', 'Nhóm dịch manga tiếng Việt', 1, '2025-03-14 11:22:13', '2025-03-14 11:22:13');
 
 -- --------------------------------------------------------
 
@@ -841,11 +849,11 @@ CREATE TABLE `votes` (
 --
 
 INSERT INTO `votes` (`id`, `user_id`, `comic_id`, `value`, `content`, `created_at`, `updated_at`) VALUES
-(4, 151, 1737, 1, 'The story is good, but it’s moving painfully slow. We’re 35 chapters in, and all we see is the MC trying to mimic the fiancée\'s lover with her and other women, which feels like he’s forcing himself to be someone he’s not.\n\nMeanwhile, the fiancée is still cheating with her long-time lover, making the MC\'s efforts seem pointless. Despite everything, the MC remains intimate with her, and the revenge plot—what everyone wants to see—feels completely stagnant.\n\nI’ve decided to give it until chapter 40 to see some real progress. If nothing changes, I’ll drop the story.', '2025-01-23 01:51:02', '2025-01-23 01:51:02'),
-(5, 151, 1370, 3, 'Good', '2025-02-02 05:56:06', '2025-02-02 05:56:06'),
-(6, 151, 1332, 5, 'Sugoii', '2025-02-02 13:09:57', '2025-02-02 13:09:57'),
-(9, 151, 723, 1, 'cudcyhdskbhdscgfn', '2025-03-08 02:34:46', '2025-03-08 02:35:09'),
-(10, 151, 753, 1, 'cudcyhdskbhdscgfn', '2025-03-08 02:38:53', '2025-03-08 02:38:53');
+(4, 151, 159, 1, 'The story is good, but it’s moving painfully slow. We’re 35 chapters in, and all we see is the MC trying to mimic the fiancée\'s lover with her and other women, which feels like he’s forcing himself to be someone he’s not.\n\nMeanwhile, the fiancée is still cheating with her long-time lover, making the MC\'s efforts seem pointless. Despite everything, the MC remains intimate with her, and the revenge plot—what everyone wants to see—feels completely stagnant.\n\nI’ve decided to give it until chapter 40 to see some real progress. If nothing changes, I’ll drop the story.', '2025-01-23 01:51:02', '2025-01-23 01:51:02'),
+(5, 151, 88, 3, 'Good', '2025-02-02 05:56:06', '2025-02-02 05:56:06'),
+(6, 151, 127, 5, 'Sugoii', '2025-02-02 13:09:57', '2025-02-02 13:09:57'),
+(9, 151, 39, 1, 'cudcyhdskbhdscgfn', '2025-03-08 02:34:46', '2025-03-08 02:35:09'),
+(10, 151, 146, 1, 'cudcyhdskbhdscgfn', '2025-03-08 02:38:53', '2025-03-08 02:38:53');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -958,19 +966,6 @@ ALTER TABLE `purchases`
   ADD PRIMARY KEY (`id`);
 
 --
--- Chỉ mục cho bảng `roles`
---
-ALTER TABLE `roles`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `roles_name_guard_name_unique` (`name`,`guard_name`);
-
---
--- Chỉ mục cho bảng `themes`
---
-ALTER TABLE `themes`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Chỉ mục cho bảng `transactions`
 --
 ALTER TABLE `transactions`
@@ -1030,19 +1025,19 @@ ALTER TABLE `comics`
 -- AUTO_INCREMENT cho bảng `comic_authors`
 --
 ALTER TABLE `comic_authors`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT cho bảng `comic_categories`
 --
 ALTER TABLE `comic_categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `comic_translators`
 --
 ALTER TABLE `comic_translators`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT cho bảng `comments`
@@ -1066,7 +1061,7 @@ ALTER TABLE `histories`
 -- AUTO_INCREMENT cho bảng `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=198;
 
 --
 -- AUTO_INCREMENT cho bảng `permissions`
@@ -1078,25 +1073,13 @@ ALTER TABLE `permissions`
 -- AUTO_INCREMENT cho bảng `pricelists`
 --
 ALTER TABLE `pricelists`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `purchases`
 --
 ALTER TABLE `purchases`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT cho bảng `roles`
---
-ALTER TABLE `roles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT cho bảng `themes`
---
-ALTER TABLE `themes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `transactions`
@@ -1108,7 +1091,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT cho bảng `translators`
 --
 ALTER TABLE `translators`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
