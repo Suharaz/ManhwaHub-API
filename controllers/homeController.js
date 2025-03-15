@@ -57,7 +57,7 @@ exports.getAllComics = async (req, res) => {
             order: [['updated_at', 'DESC']],
             limit,
             offset,
-            attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'updated_at', 'user_id'],
+            attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'updated_at', 'user_id','view_total'],
             include: [{
                 model: Chapter,
                 attributes: ['id', 'name', 'chapter_number', 'slug'],
@@ -71,7 +71,20 @@ exports.getAllComics = async (req, res) => {
         // Lưu vào cache
         cache.set(cacheKey, plainComics);
 
-        res.status(200).json({
+        // Truy vấn danh sách truyện phổ biến
+        const popularComics = await Comic.findAll({
+            where: { is_public: 1 },
+            order: [['view_day', 'DESC']],
+            limit: 10,
+            attributes: ['id', 'name', 'slug', 'thumbnail', 'updated_at'],
+        });
+
+        const plainPopularComics = popularComics.map(comic => comic.toJSON());
+
+res.status(200).json({
+    status: 'success',
+    comicsRecent: plainComics,
+    comicsPopular: plainPopularComics,
             status: 'success',
             data: plainComics,
             pagination: {
