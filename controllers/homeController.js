@@ -60,7 +60,7 @@ exports.getAllComics = async (req, res) => {
             attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'updated_at', 'user_id','view_total'],
             include: [{
                 model: Chapter,
-                attributes: ['id', 'name', 'chapter_number', 'slug'],
+                attributes: ['id', 'name', 'chapter_number', 'slug','updated_at'],
                 order: [['chapter_number', 'DESC']],
                 limit: 3,
             }],
