@@ -30,7 +30,7 @@ exports.getCommentsByComic = async (req, res) => {
             include: [
                 {
                     model: User,
-                    attributes: ['id', 'name','exp'] 
+                    attributes: ['id', 'name','exp','avatar'] 
                 }
             ],
             order: [['created_at', 'DESC']],
@@ -91,7 +91,6 @@ exports.getCommentsByComic = async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error getting comments', error });
     }
 };
-
 exports.getCommentsByChapter = async (req, res) => {
     try {
         const { comic_id, chapter_id } = req.params;

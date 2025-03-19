@@ -32,6 +32,7 @@ exports.getTransactionById = async (req, res) => {
   try {
     const { role_id, id: user_id } = req.user; // Lấy thông tin từ token
 
+
     let transactions;
     if (role_id === 2) {
       transactions = await Transaction.findAll(); // Admin xem tất cả
@@ -43,9 +44,9 @@ exports.getTransactionById = async (req, res) => {
       return res.status(404).json({ error: 'No transactions found' });
     }
 
-    return res.status(200).json(transactions);
+    return res.status(200).json({ transactions, user: req.user });
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message, user: req.user });
   }
 };
 

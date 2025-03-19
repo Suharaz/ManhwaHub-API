@@ -1,6 +1,6 @@
 const Chapter = require('../models/chapter');
 const Comic = require('../models/comic');
-const Author = require('../models/author');
+const User = require('../models/user');
 const Translator = require('../models/translator');
 const Vote = require('../models/vote');
 const Follow=require('../models/follow');
@@ -303,6 +303,56 @@ exports.rateComic = async (req, res) => {
         }
 
         res.status(500).json({ status: 'error', message: 'Internal server error', error });
+    }
+};
+
+exports.getRatingByComic = async (req, res) => {
+    try {
+        const { id } = req.params;
+        let { page = 1, limit = 10 } = req.query;
+
+        if (isNaN(id) || isNaN(page) || isNaN(limit)) {
+            return res.status(400).json({ status: 'error', message: 'Invalid parameters' });
+        }
+
+        page = parseInt(page);
+        limit = parseInt(limit);
+        const offset = (page - 1) * limit;
+
+        // Lấy tổng số đánh giá để tính tổng số trang
+        const totalRatings = await Vote.count({
+            where: { comic_id: id }
+        });
+
+        const totalPages = Math.ceil(totalRatings / limit);
+
+        // Lấy danh sách đánh giá có phân trang
+        const ratings = await Vote.findAll({
+            where: { comic_id: id },
+            attributes: ['id', 'content', 'value', 'user_id', 'updated_at','user_id'],
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'name', 'avatar'] 
+                }
+            ],
+            order: [['created_at', 'DESC']],
+            limit,
+            offset
+        });
+      
+        res.status(200).json({
+            status: 'success',
+            data: ratings,
+            meta: {
+                currentPage: page,
+                totalPages,
+                totalRatings
+            }
+        });
+    } catch (error) {
+        console.error('Error getting ratings:', error);
+        res.status(500).json({ status: 'error', message: 'Error getting ratings', error });
     }
 };
 

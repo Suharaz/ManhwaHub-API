@@ -4,63 +4,23 @@ const Category = require('../models/category');
 const Author = require('../models/author');
 const Translator = require('../models/translator');
 const Vote = require('../models/vote');
+const Follow = require('../models/follow');
 const { Sequelize } = require('sequelize');
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 600 }); // Cache sống trong 600 giây (10 phút)
 
 exports.getAllComics = async (req, res) => {
     try {
-        let { page = 1, limit = 18 } = req.query;
-        page = parseInt(page, 10);
-        limit = parseInt(limit, 10);
+        const cacheKey = 'comics_recent'; // Define cacheKey
 
-        // Đếm tổng số truyện
-        const totalComics = await Comic.count({ where: { is_public: 1 } });
-        const totalPages = Math.ceil(totalComics / limit);
-
-        // Nếu page vượt quá số trang có sẵn, trả về rỗng
-        if (page > totalPages) {
-            return res.status(200).json({
-                status: 'success',
-                data: [],
-                pagination: {
-                    page,
-                    limit,
-                    totalComics,
-                    totalPages,
-                },
-            });
-        }
-
-        // Kiểm tra cache
-        const cacheKey = `comics_page_${page}_limit_${limit}`;
-        const cachedComics = cache.get(cacheKey);
-        if (cachedComics) {
-            return res.status(200).json({
-                status: 'success',
-                data: cachedComics,
-                pagination: {
-                    page,
-                    limit,
-                    totalComics,
-                    totalPages,
-                },
-            });
-        }
-
-        // Tính offset để phân trang
-        const offset = (page - 1) * limit;
-
-        // Truy vấn danh sách truyện
         const comics = await Comic.findAll({
             where: { is_public: 1 },
             order: [['updated_at', 'DESC']],
-            limit,
-            offset,
+            limit: 18,
             attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'updated_at', 'user_id','view_total'],
             include: [{
                 model: Chapter,
-                attributes: ['id', 'name', 'chapter_number', 'slug','updated_at'],
+                attributes: ['id', 'name', 'chapter_number', 'slug','updated_at','price'],
                 order: [['chapter_number', 'DESC']],
                 limit: 3,
             }],
@@ -85,32 +45,25 @@ res.status(200).json({
     status: 'success',
     comicsRecent: plainComics,
     comicsPopular: plainPopularComics,
-            status: 'success',
-            data: plainComics,
-            pagination: {
-                page,
-                limit,
-                totalComics,
-                totalPages,
-            },
-        });
+                   });
     } catch (error) {
         console.error('Error retrieving comics:', error);
         res.status(500).json({ status: 'error', message: 'Error retrieving comics', error });
     }
 };
 
-
 exports.getDetailComic = async (req, res) => {
     const { slug } = req.params;
     try {
         const comic = await Comic.findOne({
             where: { slug },
-            attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'content'],
+            attributes: [
+                'id', 'name', 'slug', 'thumbnail', 'status', 'content', 'view_total', 'updated_at'
+            ],
             include: [
                 {
                     model: Chapter,
-                    attributes: ['id', 'name', 'chapter_number', 'slug'],
+                    attributes: ['id', 'name', 'chapter_number', 'slug', 'price', 'updated_at'],
                     order: [['chapter_number', 'DESC']],
                 },
                 {
@@ -128,10 +81,6 @@ exports.getDetailComic = async (req, res) => {
                     attributes: ['id', 'name', 'slug'],
                     through: { attributes: [] },
                 },
-                {
-                    model: Vote,
-                    attributes: [],
-                },
             ],
         });
 
@@ -139,7 +88,7 @@ exports.getDetailComic = async (req, res) => {
             return res.status(404).json({ status: 'error', message: 'Comic not found' });
         }
 
-        // Tính votes_avg_value, mặc định là 5 nếu không có vote
+        // Tính giá trị trung bình của vote
         const votesAvg = await Vote.findOne({
             where: { comic_id: comic.id },
             attributes: [[Sequelize.fn('AVG', Sequelize.col('value')), 'votes_avg_value']],
@@ -148,6 +97,10 @@ exports.getDetailComic = async (req, res) => {
             Math.round(parseFloat(votesAvg.get('votes_avg_value')) * 10) / 10 : 5;
 
         comic.setDataValue('votes_avg_value', votesAvgValue);
+
+        // Đếm tổng số lượt follow
+        const followCount = await Follow.count({ where: { comic_id: comic.id } });
+        comic.setDataValue('follow_total', followCount);
 
         res.status(200).json({
             status: 'success',
@@ -158,6 +111,7 @@ exports.getDetailComic = async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error retrieving comic', error });
     }
 };
+
 
 exports.getComicsByList = async (req, res) => {
     try {

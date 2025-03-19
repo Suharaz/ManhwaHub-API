@@ -3,6 +3,7 @@ const Comic = require('../models/comic');
 const Follow = require('../models/follow');
 const Chapter = require('../models/chapter');
 const History = require('../models/histories');
+const Comment = require('../models/comments');
 const bcrypt = require('bcryptjs');
 const  Transaction  = require('../models/transaction');
 const Purchase = require('../models/purchase');
@@ -40,10 +41,11 @@ const getInfo = async (req, res) => {
     }
 }
 
+
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password, avatar } = req.body;
+    const { name, email, password } = req.body;
 
     // Kiểm tra quyền truy cập
     if (req.user.id !== parseInt(id) && req.user.role_id !== 2) {
@@ -55,21 +57,28 @@ const updateUser = async (req, res) => {
     if (name) updatedData.name = name;
     if (email) updatedData.email = email;
     if (password) updatedData.password = bcrypt.hashSync(password, 10);
-    if (avatar) updatedData.avatar = avatar;
+    
+    // Xử lý avatar nếu có file được upload
+    if (req.file) {
+      updatedData.avatar = `/uploads/avatars/${req.file.filename}`;
+    }
 
-    // Cập nhật user bằng Sequelize `update()`
+    // Cập nhật user
     const [updated] = await User.update(updatedData, { where: { id } });
 
     if (!updated) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ message: "User updated successfully" });
+    // Lấy user đã cập nhật
+    const updatedUser = await User.findByPk(id);
+    
+    res.json({ 
+      message: "User updated successfully",
+      user: updatedUser 
+    });
   } catch (error) {
     console.error("Update User Error:", error);
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: "Invalid token" });
-    }
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -160,9 +169,60 @@ const getHistoryByUser = async (req, res) => {
       order: [['updated_at', 'DESC']],
     });
 
-    res.status(200).json({ success: true, data: { readingHistory: history } });
+const total = await History.count({ where: { user_id: userId } });
+const page = parseInt(req.query.page) || 1;
+const limit = parseInt(req.query.limit) || 10;
+const totalPages = Math.ceil(total / limit);
+
+res.status(200).json({ 
+  success: true, 
+  data: { 
+    readingHistory: history,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages
+    }
+  } 
+});
   } catch (error) {
     console.error('Get Reading History Error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+const getCommentByUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+const comments = await Comment.findAll({
+  where: { user_id: userId },
+  attributes: ['id', 'user_id', 'comic_id', 'chapter_id', 'content', 'parent_id', 'created_at', 'updated_at'],
+  include: [{
+    model: Comic,
+    attributes: ['name','thumbnail', 'slug']
+  }],
+  order: [['updated_at', 'DESC']],
+});
+
+const total = await Comment.count({ where: { user_id: userId } });
+const page = parseInt(req.query.page) || 1;
+const limit = parseInt(req.query.limit) || 10;
+const totalPages = Math.ceil(total / limit);
+
+res.status(200).json({ 
+  success: true, 
+  data: { 
+    comments,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages
+    }
+  } 
+});
+  } catch (error) {
+    console.error('Get Comment History Error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
@@ -366,6 +426,10 @@ module.exports = {
   deleteUser, 
   getFollowByUser, 
   getHistoryByUser,
+  getCommentByUser,
   saveHistory,
-  buyChapter,depositRequest,withdrawRequest,upExp
+  buyChapter,
+  depositRequest,
+  withdrawRequest,
+  upExp
 };

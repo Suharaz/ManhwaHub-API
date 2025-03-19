@@ -52,7 +52,7 @@ const login = async (req, res) => {
       if (!isMatch) return res.status(401).json({ message: "Sai pass" });
 
       // Tạo JWT token
-      const jwt_token = jwt.sign({ id: user.id,role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ id: user.id,role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
       // Xử lý remember token
       const rememberToken = crypto.randomBytes(48).toString('hex');
@@ -71,7 +71,7 @@ const login = async (req, res) => {
       // Trả về kết quả
       res.json({
         message: "Login successful",
-        jwt_token,
+        token,
         user: {
           id: user.id,
           name: user.name,

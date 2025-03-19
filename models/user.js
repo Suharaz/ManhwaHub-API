@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+// const Vote = require('./vote'); // Import trực tiếp
 
 const User = sequelize.define('User', {
     id: {
@@ -65,10 +66,12 @@ const User = sequelize.define('User', {
         allowNull: true
     }
 }, {
-    tableName: 'users',   // Chỉ định đúng tên bảng trong database
-    timestamps: true,     // Bật timestamps nhưng sẽ map sang created_at, updated_at
+    tableName: 'users',
+    timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at'
 });
+
+
 
 module.exports = User;

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authenticate = require('../middleware/auth');
+const { uploadAvatar } = require('../middleware/upload');
 
 /**
  * @swagger
@@ -84,7 +85,7 @@ router.get('/:id', userController.getInfo);
  *       '500':
  *         description: Lỗi máy chủ nội bộ
  */
-router.put('/:id', authenticate, userController.updateUser);
+router.put('/:id', authenticate,uploadAvatar, userController.updateUser);
 /**
  * @swagger
  * /api/users/{id}:
@@ -158,7 +159,9 @@ router.delete('/:id',authenticate,userController.deleteUser);
  *         description: Lỗi máy chủ nội bộ
  */
 router.get('/:id/followed-comics',authenticate, userController.getFollowByUser);
+
 /**
+ * 
  * @swagger
  * /api/users/{id}/history:
  *   get:
@@ -201,6 +204,9 @@ router.get('/:id/followed-comics',authenticate, userController.getFollowByUser);
  *         description: Lỗi máy chủ nội bộ
  */
 router.get('/:id/history',authenticate, userController.getHistoryByUser);
+
+router.get('/:id/comment',authenticate, userController.getCommentByUser);
+
 /**
  * @swagger
  * /api/users/{id}/history:

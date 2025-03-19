@@ -33,6 +33,35 @@ const Comic = sequelize.define('Comic', {
         allowNull: false,
         defaultValue: 0,
     },
+    is_recommend: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    origin_name: {
+        type: DataTypes.STRING(191),
+        allowNull: true,
+    },
+    view_total: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    view_day: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    view_week: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    view_month: {
+        type: DataTypes.BIGINT.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
+    },
     user_id: {
         type: DataTypes.BIGINT.UNSIGNED,
         allowNull: false, // Đảm bảo NOT NULL khớp với DB
