@@ -12,27 +12,27 @@ function DropDown({id, read = false, className = ""}: {id: number, read?: boolea
     const [follow, setFollow] = useState<boolean>(false);
     const {showToast} = useToast();
     
-    // useEffect(() => {
-    //     const checkAuth = async () => {
-    //         const token = await getAuthToken();
-    //         if(token) {
-    //             setLogin(true);
-    //             const checkFollow = async () => {
-    //                 await axiosClient.get("/baseapi/users/checkAction/" + id).then((res) => {
-    //                     if(res.data.follow) {
-    //                         setFollow(true);
-    //                     }
-    //                 });
-    //             }
-    //             checkFollow();
-    //         }
-    //     };
-    //     checkAuth();
-    // }, [id]);
+    useEffect(() => {
+        const checkAuth = async () => {
+            const token = await getAuthToken();
+            if(token) {
+                setLogin(true);
+                // const checkFollow = async () => {
+                //     await axiosClient.get("/baseapi/users/checkAction/" + id).then((res) => {
+                //         if(res.data.follow) {
+                //             setFollow(true);
+                //         }
+                //     });
+                // }
+                // checkFollow();
+            }
+        };
+        checkAuth();
+    }, [id]);
 
     const handleFollow = async () => {
         if(login) {
-            await axiosClient.post("/baseapi/users/follow", {
+            await axiosClient.post(`/api/comics/${id}/follow`, {
                 id: id
             }).then((res) => {
                 showToast(res.data.message, {type: "success"});

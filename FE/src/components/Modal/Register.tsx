@@ -18,23 +18,19 @@ function ModalRegister({ showModalRegister, setShowModalRegister, handleShow }: 
             return;
         }
 
-        if (!recaptchaRef.current.getValue()) {
-            alert('Vui lòng xác nhận bạn không phải là robot');
-            return;
-        }
-
+        
         if(!name || !email || !password || !confirmPassword) {
             alert('Vui lòng điền đầy đủ thông tin');
             return;
         }
         setLoading(true);
-        await axiosClient.post('/baseapi/auth/v1/register', {
+        await axiosClient.post('/api/auth/register', {
             name,
             email,
             password
         }).then(res => {
-            if (res.data.status == "success") {
-                alert('Đăng ký thành công');
+        if (res.status === 201) {
+                alert('Đăng ký thành công,hay quay lại trang đăng nhập để đăng nhập');
                 setShowModalRegister(false);
                 setName('');
                 setEmail('');
@@ -80,14 +76,9 @@ function ModalRegister({ showModalRegister, setShowModalRegister, handleShow }: 
                                 <label htmlFor="password" className="text-sm font-medium text-gray-900 block mb-2 dark:text-gray-300">Xác nhận mật khẩu</label>
                                 <input type="password" autoComplete="off" name="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="••••••••" className="border text-[#111] sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
                             </div>
-                            <div>
-                                <ReCAPTCHA 
-                                    ref={recaptchaRef}
-                                    sitekey={`${process.env.NEXT_PUBLIC_SITE_KEY}`}
-                                />
-                            </div>
+                            
                             {loading ? <ButtonLoading style="bg-btn1" /> : <button type="submit" className="w-full text-white font-bold bg-btn1 hover:bg-btn2 rounded-lg text-sm px-5 py-2.5 text-center">Đăng Ký</button>}
-                            <LoginGoogle text="signup_with" />
+                           
                             <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
                                 Bạn đã có tài khoản? <button type="button" onClick={handleShow} className="text-[#cae962] hover:underline">Đăng nhập ngay</button>
                             </div>

@@ -6,7 +6,7 @@ import useLocalStorage from '@/hooks/useLocalStorage';
 import axiosClient from '@/libs/axiosClient';
 import { CommentProp } from '@/types/CommentProp';
 import { UserProp } from '@/types/UserProp';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import ActionComment, { DropDownComment } from './ActionComment';
 import EditorCustom from './Editor';
 import PaginationCustom from '../Pagination';
@@ -40,7 +40,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
     }, []);
 
     const fetchComments = async () => {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 1));
         
         const url = chapter_id ? `/api/comics/${id}/comments?page=${currentPage}` : `/api/comics/${id}/comments?page=${currentPage}`;
         await axiosClient.get(url)
@@ -86,17 +86,18 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
             alert('Nội dung không được để trống');
             return;
         }
-        await axiosClient.post('/baseapi/comments/store', {
-            id,
-            type,
+        await axiosClient.post('/api/comments', {
+          
             content: content,
-            chapter_id: chapter_id,
-            replied_id: replyingToCommentId
+            comic_id: id,
+            parent_id: replyingToCommentId
         }).then(() => {
             setContent('');
             setReplyContent('');
             setReplyingToCommentId(null);
             setReload(!reload);
+            fetchComments();
+
         });
     };
 
@@ -136,37 +137,106 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
         setReplyContent(`@${comment.User.name}`);
     }
 
-    const handleLike = async (id: number) => {
-        await axiosClient.post('/baseapi/comments/like', {
-            id: id
-        }).then((res) => {
-            if(res.data.status == 'error') {
-                alert(res.data.message);
-            }else{
-                setReload(!reload);
-            }
-        });
+    const [likedComments, setLikedComments] = useLocalStorage<{[key: number]: boolean}>('likedComments', {});
+    const [dislikedComments, setDislikedComments] = useLocalStorage<{[key: number]: boolean}>('dislikedComments', {});
+    const [commentCounts, setCommentCounts] = useLocalStorage<{[key: number]: {likes: number, dislikes: number}}>('commentCounts', {});
+
+    const handleLike = useCallback((id: number) => {
+        if (dislikedComments[id]) {
+            alert("Bạn đã dislike bình luận này rồi!");
+            return;
+        }
+        
+        if (!likedComments[id]) {
+            setLikedComments(prev => ({...prev, [id]: true}));
+            
+            const newCounts = {
+                ...commentCounts,
+                [id]: {
+                    likes: (commentCounts[id]?.likes || 0) + 1,
+                    dislikes: commentCounts[id]?.dislikes || 0
+                }
+            };
+            setCommentCounts(newCounts);
+            
+            setComments(prevComments => prevComments?.map(comment => {
+                if (comment.id === id) {
+                    return {...comment, likes: newCounts[id].likes};
+                }
+                if (comment.replies) {
+                    comment.replies = comment.replies.map(reply => 
+                        reply.id === id ? {...reply, likes: newCounts[id].likes} : reply
+                    );
+                }
+                return comment;
+            }) || null);
+        } else {
+            alert("Bạn đã like bình luận này rồi!");
+        }
+    }, [likedComments, dislikedComments, commentCounts]);
+
+    const handleDislike = useCallback((id: number) => {
+        if (likedComments[id]) {
+            alert("Bạn đã like bình luận này rồi!");
+            return;
+        }
+        
+        if (!dislikedComments[id]) {
+            setDislikedComments(prev => ({...prev, [id]: true}));
+            
+            const newCounts = {
+                ...commentCounts,
+                [id]: {
+                    likes: commentCounts[id]?.likes || 0,
+                    dislikes: (commentCounts[id]?.dislikes || 0) + 1
+                }
+            };
+            setCommentCounts(newCounts);
+            
+            setComments(prevComments => prevComments?.map(comment => {
+                if (comment.id === id) {
+                    return {...comment, dislikes: newCounts[id].dislikes};
+                }
+                if (comment.replies) {
+                    comment.replies = comment.replies.map(reply => 
+                        reply.id === id ? {...reply, dislikes: newCounts[id].dislikes} : reply
+                    );
+                }
+                return comment;
+            }) || null);
+        } else {
+            alert("Bạn đã dislike bình luận này rồi!");
+        }
+    }, [likedComments, dislikedComments, commentCounts]);
+
+    const handleReport = (id: number) => {
+        alert('Report thành công');
     }
 
-    const handleDislike = async (id: number) => {
-        await axiosClient.post('/baseapi/comments/dislike', {
-            id: id
-        }).then((res) => {
-            if(res.data.status == 'error') {
-                alert(res.data.message);
-            }else{
-                setReload(!reload);
-            }
-        });
-    }
-
-    const handleReport = async (id: number) => {
-        await axiosClient.post('/baseapi/comments/report', {
-            id: id
-        }).then((res) => {
-            alert(res.data.message);
-        });
-    }
+    // Cập nhật số liệu likes/dislikes từ localStorage vào comments
+    useEffect(() => {
+        if (comments) {
+            const updatedComments = comments.map(comment => {
+                const updatedComment = {
+                    ...comment,
+                    likes: commentCounts[comment.id]?.likes || 0,
+                    dislikes: commentCounts[comment.id]?.dislikes || 0
+                };
+                
+                if (comment.replies) {
+                    updatedComment.replies = comment.replies.map(reply => ({
+                        ...reply,
+                        likes: commentCounts[reply.id]?.likes || 0,
+                        dislikes: commentCounts[reply.id]?.dislikes || 0
+                    }));
+                }
+                
+                return updatedComment;
+            });
+            
+            setComments(updatedComments);
+        }
+    }, [commentCounts]);
 
     return (
         <>
@@ -216,7 +286,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                             <div className='ml-[60px] text-[15px]' dangerouslySetInnerHTML={{__html: comment.content}} />
                             {user && <ActionComment handleReport={() => handleReport(comment.id)} handleLike={() => handleLike(comment.id)} handleDislike={() => handleDislike(comment.id)} handleReply={() => startReplying(comment)} comment={comment} />}
                         </div>
-                        {user && user.id == comment.User.id && <DropDownComment startEditing={() => startEditing(comment)} id={comment.id} reload={reload} setReload={setReload} handleClick={() => toggleDropdown(comment.id)}  isOpenDrop={openDropdowns[comment.id]} />}
+                        {user && user.id == comment.User.id && <DropDownComment startEditing={() => startEditing(comment)} id={comment.id} reload={reload} setReload={setReload} handleClick={() => toggleDropdown(comment.id)} isOpenDrop={openDropdowns[comment.id]} fetchComments={fetchComments} />}
                     </div>
                     :<div>
                         <div className='flex my-[10px] w-full'>
@@ -256,7 +326,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                                 <div className='ml-[60px] text-[15px]' dangerouslySetInnerHTML={{__html: reply.content}} />
                                 {user && <ActionComment handleReport={() => handleReport(reply.id)} handleLike={() => handleLike(reply.id)} handleDislike={() => handleDislike(reply.id)} handleReply={() => startReplying(reply)} comment={reply} />}
                             </div>
-                            {user && user.id == reply.User.id && <DropDownComment startEditing={() => startEditing(reply)} id={reply.id} reload={reload} setReload={setReload} handleClick={() => toggleDropdown(reply.id)}  isOpenDrop={openDropdowns[reply.id]} />}
+                            {user && user.id == reply.User.id && <DropDownComment startEditing={() => startEditing(reply)} id={reply.id} reload={reload} setReload={setReload} handleClick={() => toggleDropdown(reply.id)} isOpenDrop={openDropdowns[reply.id]} fetchComments={fetchComments} />}
                         </div> : 
                         <div>
                             <div className='flex my-[10px] w-full'>

@@ -12,17 +12,13 @@ export const metadata: Metadata = {
 }
 
 async function Page() {
-    const data = await getAllCategories();
+    // const data = await getAllCategories();
     return (  
         <div>
             <Header />
             <main className="bg-gradient-5 pb-28 flex-grow relative block">
                 <div className="container mx-auto overflow-hidden min-h-screen">
-                    {data.ads && <div className="flex justify-center">
-                    <a target="_blank" href={data.ads.url} className="mt-5 mb-7">
-                        <img src={data.ads.image} alt="qc" />
-                    </a>
-                    </div>}
+                   
                     <section className="mt-12 mb-10">
                         <div className="flex justify-between mb-6">
                             <h2 className="text-[1.3rem] sm:text-[1.65rem] flex items-center text-white">Tìm Kiếm Nâng Cao</h2>

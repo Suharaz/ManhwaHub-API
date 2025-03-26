@@ -133,20 +133,20 @@ exports.getComicsByList = async (req, res) => {
             where: { is_public: 1 },
             limit,
             offset,
-            attributes: ['id', 'name', 'slug', 'thumbnail', 'status',  'view_total'],
+            attributes: ['id', 'name', 'slug', 'thumbnail', 'status',  'view_total','updated_at','created_at'],
         };
 
         let title;
         switch (slug) {
-            case 'comic-updated':
+            case 'truyen-moi-cap-nhat':
                 queryOptions.order = [['updated_at', 'DESC']];
                 title = 'Latest Comics';
                 break;
-            case 'comic-added':
+            case 'truyen-moi':
                 queryOptions.order = [['created_at', 'DESC']];
                 title = 'New Comics';
                 break;
-            case 'comic-hot':
+            case 'truyen-hot':
                 queryOptions.order = [['view_total', 'DESC']];
                 title = 'Comic Hot';
                 break;
@@ -203,12 +203,12 @@ exports.getComicsByList = async (req, res) => {
         for (let comic of comics) {
             const chapters = await Chapter.findAll({
                 where: { comic_id: comic.id },
-                attributes: ['id', 'name', 'chapter_number', 'slug'],
+                attributes: ['id', 'name', 'chapter_number', 'slug','updated_at','price'],
                 order: [['chapter_number', 'DESC']],
                 limit: 3,
             });
             const plainComic = comic.toJSON(); // Chuyển comic thành plain JSON
-            plainComic.chapters = chapters.map(ch => ch.toJSON()); // Chuyển chapters thành plain JSON
+            plainComic.Chapters = chapters.map(ch => ch.toJSON()); // Chuyển chapters thành plain JSON
             plainComics.push(plainComic);
         }
 
@@ -277,12 +277,12 @@ exports.getComicsByCategory = async (req, res) => {
         for (let comic of comics) {
             const chapters = await Chapter.findAll({
                 where: { comic_id: comic.id },
-                attributes: ['id', 'name', 'chapter_number', 'slug'],
+                attributes: ['id', 'name', 'chapter_number', 'slug','updated_at','price'],
                 order: [['chapter_number', 'DESC']],
                 limit: 3,
             });
             const plainComic = comic.toJSON();
-            plainComic.chapters = chapters.map(ch => ch.toJSON());
+            plainComic.Chapters = chapters.map(ch => ch.toJSON());
             plainComics.push(plainComic);
         }
 
@@ -348,12 +348,12 @@ exports.getComicsByAuthor = async (req, res) => {
         for (let comic of comics) {
             const chapters = await Chapter.findAll({
                 where: { comic_id: comic.id },
-                attributes: ['id', 'name', 'chapter_number', 'slug'],
+                attributes: ['id', 'name', 'chapter_number', 'slug','updated_at','price'],
                 order: [['chapter_number', 'DESC']],
                 limit: 3,
             });
             const plainComic = comic.toJSON();
-            plainComic.chapters = chapters.map(ch => ch.toJSON());
+            plainComic.Chapters = chapters.map(ch => ch.toJSON());
             plainComics.push(plainComic);
         }
 
@@ -385,7 +385,7 @@ exports.getComicsByAuthor = async (req, res) => {
 exports.search = async (req, res) => {
     try {
         const { keyword, page = 1 } = req.query;
-        const limit = 30;
+        const limit = 5;
         const offset = (parseInt(page) - 1) * limit;
 
         // Kiểm tra keyword
@@ -408,7 +408,8 @@ exports.search = async (req, res) => {
                     { slug: { [Sequelize.Op.like]: `%${slugKeyword}%` } },
                 ],
             },
-            attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'origin_name'],
+            attributes: ['id', 'name', 'slug', 'thumbnail', 'status', 'origin_name','updated_at'],  
+            order: [['updated_at', 'DESC']],
             limit,
             offset,
         });
@@ -416,13 +417,14 @@ exports.search = async (req, res) => {
         // Thêm lastChapter cho mỗi comic và chuyển thành plain JSON
         const plainComics = [];
         for (let comic of comics) {
-            const lastChapter = await Chapter.findOne({
+            const lastChapter = await Chapter.findAll({
                 where: { comic_id: comic.id },
-                attributes: ['id', 'name', 'chapter_number', 'slug'],
+                attributes: ['id', 'name', 'chapter_number', 'slug', 'updated_at', 'price'],
                 order: [['chapter_number', 'DESC']],
+                limit: 3,
             });
             const plainComic = comic.toJSON();
-            plainComic.lastChapter = lastChapter ? lastChapter.toJSON() : null;
+            plainComic.Chapters = lastChapter.length > 0 ? lastChapter.map(ch => ch.toJSON()) : null;
             plainComics.push(plainComic);
         }
 

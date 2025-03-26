@@ -19,13 +19,13 @@ function ActionComment({comment, handleReply, handleLike, handleDislike ,handleR
                 <button onClick={handleLike} aria-label='like' className="bg-transparent hover:text-white ml-2 transition-all flex items-center gap-1 boder-none text-mediumGray font-semibold text-[16px] rounded-md">
                     <FaRegThumbsUp />
                     <span>
-                        {comment.total_like}
+                        {comment.likes || 0}
                     </span>
                 </button>
                 <button onClick={handleDislike} aria-label='dislike' className="bg-transparent ml-2 hover:text-white transition-all flex items-center gap-1 boder-none text-mediumGray font-semibold text-[16px] rounded-md">
                     <FaRegThumbsDown />
                     <span>
-                        {comment.total_dislike}
+                        {comment.dislikes || 0}
                     </span>
                 </button>
                 <button onClick={handleReport} title='Báo cáo' aria-label='Report' className="bg-transparent hover:text-white transition-all ml-2 flex items-center gap-1 boder-none text-mediumGray font-semibold text-[16px] rounded-md">
@@ -38,15 +38,14 @@ function ActionComment({comment, handleReply, handleLike, handleDislike ,handleR
 
 export default ActionComment;
 
-export function DropDownComment({ isOpenDrop, handleClick, reload, setReload, id, startEditing }: {isOpenDrop: boolean, handleClick: any, reload: boolean, setReload: any, id: number, startEditing: () => void}) {
+export function DropDownComment({ isOpenDrop, handleClick, reload, setReload, id, startEditing, fetchComments }: {isOpenDrop: boolean, handleClick: any, reload: boolean, setReload: any, id: number, startEditing: () => void, fetchComments: () => void}) {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const onDeleteAction = async (id: number) => {
-        await axiosClient.post('/baseapi/comments/delete', {
-            id: id
-        });
+    const onDeleteAction = async () => {
+        await axiosClient.delete(`/api/comments/${id}`);
         await onClose();
         alert('Xóa thành công');
         setReload(!reload);
+        fetchComments();
     }
     return (
         <>
@@ -65,7 +64,7 @@ export function DropDownComment({ isOpenDrop, handleClick, reload, setReload, id
                 </ul>
             </div>}
         </div>
-        <ModalDelete handleDelete={() => onDeleteAction(id)} message={`Bạn chắc chắn muốn xóa bình luận này?`} isOpen={isOpen} onClose={onClose} />
+        <ModalDelete handleDelete={onDeleteAction} message={`Bạn chắc chắn muốn xóa bình luận này?`} isOpen={isOpen} onClose={onClose} />
         </>
     )
 }

@@ -5,7 +5,7 @@ import Header from "../Header/Guest";
 import { getAuthToken } from "@/hooks/useAuth";
 import axiosClient from "@/libs/axiosClient";
 
-function Pay({message, id}: {message: string, id: number}) {
+        function Pay({message, id}: {message: string, id: number}) {
     const [messageError, setMessageError] = useState('');
     const [messageSuccess, setMessageSuccess] = useState('');
 
@@ -17,16 +17,20 @@ function Pay({message, id}: {message: string, id: number}) {
             return;
         }
 
-        await axiosClient.post('/baseapi/users/buyChapter',{
-            id: id
-        }).then((res) => {
+        try {
+            
+            const res = await axiosClient.post('/api/user/buyChapter', {
+                chapter_id: id
+            });
             if(res.data.status === 'success'){
                 setMessageSuccess(res.data.message);
-                // window.location.reload();
+                window.location.reload();
             }else{
                 setMessageError(res.data.message);
             }
-        });
+        } catch (error) {
+            setMessageError('Đã xảy ra lỗi. Vui lòng thử lại sau.');
+        }
     }
 
     const handleClose = () => {

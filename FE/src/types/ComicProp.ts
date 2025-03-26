@@ -18,17 +18,10 @@ export interface DetailProp {
 }
 
 export interface ReadProp {
-    status: string;
-    message: string;
-    comic: ComicProp;
     currentChapter: ChapterProp;
     nextChapter: ChapterProp;
     prevChapter: ChapterProp;
-    servers: ComicProp[];
-    ads1: any;
-    ads2: any;
-    meta: any;
-    banners: any;
+    
 }
 
 export interface ComicProp {

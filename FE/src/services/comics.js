@@ -17,35 +17,141 @@ export async function getComic(slug) {
   return data;
 }
 
-export async function getChapter(slug, chapter) {
+export async function getChapter(id) {
   const token = await getAuthToken();
-  const response = await fetch(baseUrl + '/comics/getChapter/' + slug + '/' + chapter, {
+  const response = await fetch(`${baseUrl}/chapters/getChapter/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token?.value}`
     }
   }, 3600);
+  // console.log(id);
   const data = await response.json();
   return data;
 }
 
 export async function getComicsByList(slug, page) {
-  const response = await fetch(baseUrl + '/comics/getComicsByList/' + slug + '?page=' + page, optionNoStore);
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(baseUrl + `/home/list/${slug}?page=${page}`, optionNoStore);
+    if (!response.ok) {
+      return {
+        status: "error",
+        message: "Failed to fetch comics"
+      };
+    }
+    const data = await response.json();
+    return {
+      status: "success",
+      data: {
+        items: data.data.items || [],
+        pagination: {
+          currentPage: page,
+          totalPages: data.data.pagination.totalPages,
+          totalItems: data.data.pagination.totalItems,
+          limit: data.data.pagination.limit
+        },
+        title: data.data.title || ''
+      }
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message
+    };
+  }
 }
 
 export async function getComicsByCategory(slug, page) {
-  const response = await fetch(baseUrl + '/comics/getComicsByCategory/' + slug + '?page=' + page, optionNoStore);
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(baseUrl + `/home/category/${slug}?page=${page}`, optionNoStore);
+    if (!response.ok) {
+      return {
+        status: "error",
+        message: "Failed to fetch comics"
+      };
+    }
+    const data = await response.json();
+    return {
+      status: "success",
+      data: {
+        items: data.data.items || [],
+        pagination: {
+          currentPage: page,
+          totalPages: data.data.pagination.totalPages,
+          totalItems: data.data.pagination.totalItems,
+          limit: data.data.pagination.limit
+        },
+        title: data.data.title || ''
+      }
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message
+    };
+  }
+}
+export async function getSreach(slug, page) {
+  try {
+    const response = await fetch(baseUrl + `/home/search?keyword=${slug}&page=${page}`, optionNoStore);
+    if (!response.ok) {
+      return {
+        status: "error",
+        message: "Failed to fetch comics"
+      };
+    }
+    const data = await response.json();
+    return {
+      status: "success",
+      data: {
+        items: data.data.items || [],
+        pagination: {
+          currentPage: page,
+          totalPages: data.data.pagination.totalPages,
+          totalItems: data.data.pagination.totalItems,
+          limit: data.data.pagination.limit
+        },
+        title: data.data.title || ''
+      }
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message
+    };
+  }
 }
 
 export async function getComicsByAuthor(slug, page) {
-  const response = await fetch(baseUrl + '/comics/getComicsByAuthor/' + slug + '?page=' + page, optionNoStore);
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(baseUrl + `/home/author/${slug}?page=${page}`, optionNoStore);
+    if (!response.ok) {
+      return {
+        status: "error",
+        message: "Failed to fetch comics"
+      };
+    }
+    const data = await response.json();
+    return {
+      status: "success",
+      data: {
+        items: data.data.items || [],
+        pagination: {
+          currentPage: page,
+          totalPages: data.data.pagination.totalPages,
+          totalItems: data.data.pagination.totalItems,
+          limit: data.data.pagination.limit
+        },
+        title: data.data.title || ''
+      }
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: error.message
+    };
+  }
 }
 
 export async function getAllComics() {
@@ -73,7 +179,7 @@ export async function getChaptersByPage(page) {
 }
 
 export async function getComicsByLetter(letter, page) {
-  const response = await fetch(baseUrl + '/comics/getComicsByLetter/' + letter + '?page=' + page, optionNoStore);
+  const response = await fetch(`${baseUrl}/home/search?keyword=${letter}&page=${page}`, optionNoStore);
   const data = await response.json();
   return data;
 }

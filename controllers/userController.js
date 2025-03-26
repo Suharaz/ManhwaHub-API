@@ -286,13 +286,13 @@ const buyChapter = async (req, res) => {
     });
 
     if (existingPurchase) {
-      return res.status(400).json({ error: 'You have already purchased this chapter.' });
+      return res.status(400).json({ message: 'You have already purchased this chapter.' });
     }
     const chapter = await Chapter.findByPk(chapter_id, {
       attributes: ['id', 'name', 'price', 'user_id']
     });
     if (!chapter) {
-      return res.status(404).json({ error: 'Chapter not found' });
+      return res.status(404).json({ message: 'Chapter not found' });
     }
 
     // Lấy thông tin người mua và tác giả
@@ -304,12 +304,12 @@ const buyChapter = async (req, res) => {
     });
     
     if (!buyer || !author) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     // Kiểm tra số dư người mua
     if (buyer.total_point < chapter.price) {
-      return res.status(400).json({ error: 'Insufficient balance' });
+      return res.status(400).json({ message: 'Insufficient balance' });
     }
 
     // Trừ tiền người mua
@@ -336,7 +336,7 @@ const buyChapter = async (req, res) => {
     });
     
 
-    return res.status(200).json({ message: 'Chapter purchased successfully' });
+    return res.status(200).json({ message: 'Mua chap thành công',status:'success' });
 
   } catch (error) {
     return res.status(500).json({ error: error.message });

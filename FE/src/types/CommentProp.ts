@@ -20,5 +20,7 @@ export interface CommentProp {
     total_like?: number;
     total_dislike?: number;
     total_report?: number;
+    likes?: number;
+    dislikes?: number;
     user?: UserProp;
 }

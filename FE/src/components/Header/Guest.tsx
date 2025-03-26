@@ -7,30 +7,39 @@ import { MdOutlineSupervisedUserCircle } from "react-icons/md";
 import NavigationUser from "../Navigation/User";
 import { IoGrid } from "react-icons/io5";
 import { BsList } from "react-icons/bs";
-import { useEffect, useRef, useState } from "react";
+import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { renderStatus } from "@/utils/status";
 import { ComicProp } from "@/types/ComicProp";
-import axios from "axios";
+import { getAllCategories } from "@/services/categories";
 import { usePathname } from "next/navigation";
+import axiosClient from "@/libs/axiosClient";
+
+interface SreachResult {
+    slug: string;
+    thumbnail: string;
+    name: string;
+    status: string;
+    Chapters: {
+        name: string;
+    };
+}
 
 function Header({read = false, handle, active = false, page = 1, chapter, totalPage = 1, containerRef} : {read?: boolean, handle?: any, active?: boolean, page?: number, chapter?: string, totalPage?: number, containerRef?: any}) {
     const [show, setShow] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
     const [search, setSearch] = useState('');
-    const [searchResult, setSearchResult] = useState<ComicProp[] | null>(null);
+    const [searchResult, setSearchResult] = useState<any>(null);
     const debounceTimeout = useRef<any>(null);
     const [categories, setCategories] = useState([]);
     const [isScrollingDown, setIsScrollingDown] = useState(false);
     const pathname = usePathname();
 
-    // useEffect(() => {
-    //     const getCategories = async () => {
-    //         const res = await axios.get(`/baseapi/categories/getCategories`);
-    //         setCategories(res.data.categories);
-    //     }
-    //     getCategories();
-    // }, []);
+    useEffect(() => {
+        getAllCategories()
+            .then(data => setCategories(data || []))
+            .catch(() => setCategories([]));
+    }, []);
 
     useEffect(() => {
         if (read === true) {
@@ -76,8 +85,9 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
     };
 
     const searchApi = (keyword: string) => {
-        axios.get(`/baseapi/comics/search?keyword=${keyword}`).then((res) => {
-            setSearchResult(res.data.comics);
+        axiosClient.get(`/api/home/search?keyword=${keyword}`).then((res) => {
+            // console.log(res.data.data.items);
+            setSearchResult(res.data.data.items);
         }).catch(() => {
             setSearchResult(null);
         });
@@ -128,13 +138,13 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
                                 </ul>
                             </li>
                             <li className="relative">
-                                <Link href={`/danh-sach/truyen-moi`} className="flex items-center py-2 px-[1.2rem] cursor-pointer text-[1.05rem] hover:text-white transition-all">Mới nhất</Link>
+                                <Link href={`/danh-sach/truyen-moi`} className="flex items-center py-2 px-[1.2rem] cursor-pointer text-[1.05rem] hover:text-white transition-all">Truyện mới</Link>
                             </li>
                             <li className="relative">
                                 <Link href={`/danh-sach/truyen-moi-cap-nhat`} className="flex items-center py-2 px-[1.2rem] cursor-pointer text-[1.05rem] hover:text-white transition-all">Mới cập nhật</Link>
                             </li>
                             <li className="relative">
-                                <Link href={`/danh-sach/truyen-hot`} className="flex items-center py-2 px-[1.2rem] cursor-pointer text-[1.05rem] hover:text-white transition-all">Xếp hạng</Link>
+                                <Link href={`/danh-sach/truyen-hot`} className="flex items-center py-2 px-[1.2rem] cursor-pointer text-[1.05rem] hover:text-white transition-all">Truyện hot</Link>
                             </li>
                         </ul>
                     </div>
@@ -164,22 +174,33 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
                             {searchResult && searchResult.length > 0 && (
                                 <div className={`top-full absolute w-full bg-btn shadow-lg overflow-hidden pt-4 -mt-4 z-[5] rounded-e-lg border border-btnHover`}>
                                 <div>
-                                    {searchResult.map((item, index) =>
-                                    <Link href={`/${item.slug}`} className={`${index % 2 == 0 ? 'bg-opacity11x ' : ' '}flex hover:bg-btnHover items-center relative p-4 w-full transition-all`} key={index}>
-                                        <div className="w-[3.2rem] mr-[.8rem] flex-shrink-0 rounded-[.3rem] overflow-hidden block">
-                                            <div className="relative pb-[140%]">
-                                                <img src={item.thumbnail} className="absolute w-full top-0 left-0" alt="" />
-                                            </div>
-                                        </div>
-                                        <div className="flex-grow w-full">
-                                            <h6 className="w-full transition-all duration-300 font-medium line-clamp-1 text-ellipsis leading-[1.5rem] text-[#c6cacf] hover:text-[white] text-[1rem]">{item.name}</h6>
-                                            <div>
-                                                <span className="text-[.95rem] text-[#747c88] inline-flex items-center after:content-[''] after:block after:w-[2px] after:h-[2px] after:mx-[.4rem] after:bg-[#747c88]">{renderStatus(item.status)}</span>
-                                                {item.last_chapter && <span className="text-[.95rem] text-[#747c88] inline-flex items-center">Chapter {item.last_chapter.name}</span>}
-                                            </div>
-                                        </div>
-                                    </Link>
-                                    )}
+                                {searchResult?.map((item: SreachResult, index: number) => (
+                                                <Link 
+                                                    href={`/${item.slug}`} 
+                                                    className={`${index % 2 === 0 ? 'bg-opacity11x' : ''} flex hover:bg-btnHover items-center relative p-4 w-full transition-all`} 
+                                                    key={index}
+                                                >
+                                                    <div className="w-[3.2rem] mr-[.8rem] flex-shrink-0 rounded-[.3rem] overflow-hidden block">
+                                                        <div className="relative pb-[140%]">
+                                                            <img src={item.thumbnail} className="absolute w-full top-0 left-0" alt="" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-grow w-full">
+                                                        <h6 className="w-full transition-all duration-300 font-medium line-clamp-1 text-ellipsis leading-[1.5rem] text-[#c6cacf] hover:text-white text-[1rem]">
+                                                            {item.name}
+                                                        </h6>
+                                                        <div>
+                                                            <span className="text-[.95rem] text-[#747c88] inline-flex items-center after:content-[''] after:block after:w-[2px] after:h-[2px] after:mx-[.4rem] after:bg-[#747c88]">
+                                                                {renderStatus(item.status)}
+                                                            </span>
+                                                            <span className="text-[.95rem] text-[#747c88] inline-flex items-center">
+                                                                 {item.Chapters.name}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            ))}
+
                                 </div>
                                 <div className="p-4">
                                     <Link href={`/tim-kiem-nang-cao`} className="w-full text-white bg-[#3c8bc6] hover:bg-[#5a9dcf] inline-block font-normal text-center select-none py-[.475rem] px-3 text-[1rem] transition-all rounded-lg">

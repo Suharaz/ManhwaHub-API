@@ -1,6 +1,7 @@
 const Chapter = require('../models/chapter');
 const Comic = require('../models/comic');
 const Purchase = require('../models/purchase');
+const { Op } = require('sequelize');
 
 const createChapter = async (req, res) => {
     try {
@@ -99,31 +100,78 @@ const deleteChapter = async (req, res) => {
 const getChapter = async (req, res) => {
     try {
         const { id } = req.params;
-        const chapter = await Chapter.findByPk(id, {
-            attributes: ['id', 'name', 'slug', 'price', 'content'],
+
+        // Lấy thông tin chapter hiện tại
+        const currentChapter = await Chapter.findByPk(id, {
+            attributes: ['id', 'name', 'slug', 'price', 'content', 'updated_at', 'chapter_number', 'comic_id'],
         });
 
-        if (!chapter) {
+        if (!currentChapter) {
             return res.status(404).json({ status: 'error', message: 'Chapter not found' });
         }
 
-        if (chapter.price > 0) {
+        // Check mua nếu chapter có giá
+        if (currentChapter.price > 0) {
             if (!req.user) {
-                return res.status(401).json({ status: 'error', message: 'You need to log in to access this chapter' });
+                return res.status(401).json({ status: 'info', message: 'You need to log in to access this chapter', currentChapter: id });
             }
             const hasPurchased = await Purchase.findOne({
                 where: { user_id: req.user.id, chapter_id: id },
             });
             if (!hasPurchased) {
-                return res.status(403).json({ status: 'error', message: 'You need to purchase this chapter' });
+                return res.status(403).json({ status: 'info', message: 'You need to purchase this chapter', currentChapter: id });
             }
         }
 
-        res.status(200).json({ status: 'success', data: chapter });
+        // Lấy next chapter (chapter_number lớn hơn, cùng comic)
+        const nextChapter = await Chapter.findOne({
+            where: {
+                comic_id: currentChapter.comic_id,
+                chapter_number: { [Op.gt]: currentChapter.chapter_number }
+            },
+            order: [['chapter_number', 'ASC']],
+            attributes: ['id', 'name', 'slug']
+        });
+
+        // Lấy prev chapter (chapter_number nhỏ hơn, cùng comic)
+        const prevChapter = await Chapter.findOne({
+            where: {
+                comic_id: currentChapter.comic_id,
+                chapter_number: { [Op.lt]: currentChapter.chapter_number }
+            },
+            order: [['chapter_number', 'DESC']],
+            attributes: ['id', 'name', 'slug']
+        });
+        const comics = await Comic.findByPk(currentChapter.comic_id);
+        
+        const listChapter = await Chapter.findAll({
+            where: { comic_id: currentChapter.comic_id },
+            order: [['chapter_number', 'ASC']],
+            attributes: ['id', 'name', 'slug']
+        });
+
+        res.status(200).json({
+            status: 'success',
+            data: {
+                comics,
+                currentChapter: {
+                    id: currentChapter.id,
+                    name: currentChapter.name,
+                    slug: currentChapter.slug,
+                    price: currentChapter.price,
+                    content: currentChapter.content
+                },
+                nextChapter: nextChapter || null,
+                prevChapter: prevChapter || null,
+                listChapter: listChapter
+            }
+        });
     } catch (error) {
-        res.status(500).json({ status: 'error', message: 'Error fetching chapter',error });
+        console.error(error);
+        res.status(500).json({ status: 'error', message: 'Error fetching chapter', error });
     }
 };
+
 
 const getListChapter = async (req, res) => {
     try {
