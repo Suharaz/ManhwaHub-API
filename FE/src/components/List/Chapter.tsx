@@ -173,7 +173,7 @@ function ListChapter({chapters, slug, id}: {chapters: ChapterProp[], slug: strin
                         itemScope
                         itemType="https://schema.org/ListItem"
                         itemProp="itemListElement">
-                            <Link href={`/${slug}/${chapters[0].slug}`} className="flex hover:bg-btnHover py-4 p-3">
+                            <Link href={`/${slug}/${chapters[0].id}`} className="flex hover:bg-btnHover py-4 p-3">
                                 <div className="w-[50%] truncate flex flex-col">
                                     <div className="flex items-center">
                                         <span className={`font-bold ${ history.map((item: any) => Number(item)).includes(chapters[0].id) ? 'text-[#00C3FF]' : 'text-white'}`}>{chapters[0].name}{chapters[0].title && chapters[0].title != "" && `: ${chapters[0].title}` }</span>
