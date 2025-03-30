@@ -3,7 +3,7 @@ const Notification = require('../models/notifications');
 exports.getNotiByUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { page = 1, limit = 10 } = req.query; // Mặc định page = 1, limit = 10
+    const { page = 1, limit = 5 } = req.query; // Mặc định page = 1, limit = 5
 
     const offset = (page - 1) * limit;
 

@@ -17,29 +17,39 @@ function DropDown({id, read = false, className = ""}: {id: number, read?: boolea
             const token = await getAuthToken();
             if(token) {
                 setLogin(true);
-                // const checkFollow = async () => {
-                //     await axiosClient.get("/baseapi/users/checkAction/" + id).then((res) => {
-                //         if(res.data.follow) {
-                //             setFollow(true);
-                //         }
-                //     });
-                // }
-                // checkFollow();
+                const checkFollow = async () => {
+                    await axiosClient.get("/api/user/checkAction/" + id).then((res) => {
+                        if(res.data.follow) {
+                            setFollow(true);
+                        }
+                    });
+                }
+                checkFollow();
             }
         };
         checkAuth();
     }, [id]);
 
     const handleFollow = async () => {
-        if(login) {
-            await axiosClient.post(`/api/comics/${id}/follow`, {
-                id: id
-            }).then((res) => {
-                showToast(res.data.message, {type: "success"});
-                setFollow(!follow);
-            })
-        } else {
-            showToast("Bạn cần đăng nhập để thực hiện chức năng này", {type: "error"});
+        if (!login) {
+            showToast("Bạn cần đăng nhập để thực hiện chức năng này", { type: "error" });
+            return;
+        }
+    
+        try {
+            if (follow) {
+                // Nếu đã follow, gọi API hủy theo dõi
+                await axiosClient.delete(`/api/comics/${id}/unfollow`);
+                showToast("Đã hủy theo dõi truyện", { type: "success" });
+                setFollow(false);
+            } else {
+                // Nếu chưa follow, gọi API follow
+                await axiosClient.post(`/api/comics/${id}/follow`);
+                showToast("Đã theo dõi truyện", { type: "success" });
+                setFollow(true);
+            }
+        } catch (error) {
+            showToast("Có lỗi xảy ra, vui lòng thử lại!", { type: "error" });
         }
     }
 
