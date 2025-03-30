@@ -77,35 +77,10 @@ async function Detail({params}: {params: {slug: string}}) {
         {title: "Trang Chủ", link: process.env.NEXT_PUBLIC_BASE_URL + "/"},
         {title: comic.name, link: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}`}
     ]
-    // const jsonLd = {
-    //     "@context": "https://schema.org",
-    //     "@type": "Article",
-    //     "url": process.env.NEXT_PUBLIC_BASE_URL,
-    //     "name": data.meta.title_detail_comic,
-    //     "description": data.meta.description_detail_comic,
-    //     "mainEntityOfPage": {
-    //         "@type": "WebPage",
-    //         "@id": process.env.NEXT_PUBLIC_BASE_URL
-    //     },
-    //     "headline": data.meta.title_detail_comic,
-    //     "datePublished": comic.created_at,
-    //     "dateModified": comic.updated_at,
-    //     "publisher": {
-    //         "@type": "Organization",
-    //         "name": process.env.NEXT_PUBLIC_APP_NAME,
-    //         "logo": {
-    //             "@type": "ImageObject",
-    //             "url": process.env.NEXT_PUBLIC_BASE_URL + "/logo.png"
-    //         }
-    //     },
-    //     "image": comic.thumbnail,
-    // }
+   
     return (  
         <>
-        {/* <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        /> */}
+       
         <Header />
         <main itemScope className="bg-gradient-5" itemType="https://schema.org/WebPage">
             {data.ads && <div className="flex justify-center">

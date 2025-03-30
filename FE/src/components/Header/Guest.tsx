@@ -121,10 +121,24 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
                     <button onClick={() => setShow(!show)} aria-label="listmobile" className="text-[#c6cacf] hover:text-white pr-2 sm:pr-4 xl:hidden block">
                         <BsList size={25} />
                     </button>
-                    <Link href={`${process.env.NEXT_PUBLIC_BASE_URL}`} className="mr-4 relative inline-block transition-all">
-                        {!read ? <Image priority src={`/logo.png`} alt="logo" width={120} height={26} style={{width:'auto'}} />
-                        : <Image priority src={`/favicon.png`} alt="logo" width={50} height={35} style={{width:'auto'}} />}
+                    <Link
+                        href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
+                        className="mr-4 relative inline-block transition-all text-2xl font-bold text-white px-6 py-3 rounded-xl 
+                                hover:scale-105 hover:rotate-2 transform duration-300 ease-in-out"
+                        style={{
+                            backgroundImage: "url('https://i.pinimg.com/originals/62/39/4d/62394d753859943e6a1a36443ef78795.gif')",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                        }}
+                    >
+                        {!read ? (
+                            <span className="transition-all duration-300 ease-in-out drop-shadow-lg">Truyện Hihi🚀</span>
+                        ) : (
+                            <span className="transition-all duration-300 ease-in-out drop-shadow-lg">Hihi</span>
+                        )}
                     </Link>
+
+
                     <div>
                         <ul className={`py-[.4rem] text-[#c6cacf] ${show ? 'block' : 'hidden'} xl:flex max-xl:absolute transition-all max-xl:left-4 max-xl:top-15 max-xl:shadow-10 max-xl:bg-[#182335] max-xl:boder max-xl:rounded-lg max-xl:border-[#1e2c43]`}>
                             <li className="relative group">

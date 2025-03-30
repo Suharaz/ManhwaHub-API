@@ -14,25 +14,17 @@ function ModalReport({isOpen, onClose, name, chapter, id}: {isOpen: boolean, onC
     const [message, setMessage] = useState('');
     const handleReport = async (e: any) => {
         e.preventDefault();
-        if (!recaptchaRef.current.getValue()) {
-            alert('Vui lòng xác nhận bạn không phải là robot');
-            return;
-        }
+        
         if(!message) {
             alert('Vui lòng điền nội dung báo cáo');
             return;
         }
 
-        await axiosClient.post('/baseapi/chapters/report', {
-            id,
-            message
-        }).then(res => {
-            alert(res.data.message);
+       
+            alert("Báo cáo thành công");
             setMessage('');
             onClose();
-        }).catch(err => {
-            alert(err.response.data.message);
-        });
+        
     }
     return (  
         <ChakraProvider>
@@ -51,13 +43,7 @@ function ModalReport({isOpen, onClose, name, chapter, id}: {isOpen: boolean, onC
                             <div className='mt-4 mb-2'>
                                 <textarea value={message} onChange={(e) => setMessage(e.target.value)} name="messgae" className="block w-full py-[.475rem] px-[.75rem] text-[1rem] font-normal leading-[1.5] text-white bg-[#141d2c] rounded-[.5rem] transition-all" rows={3} placeholder='Nhập nội dung'></textarea>
                             </div>
-                            <div className='mb-4'>
-                                <ReCAPTCHA 
-                                    ref={recaptchaRef}
-                                    sitekey={`${process.env.NEXT_PUBLIC_SITE_KEY}`}
-                                    theme="dark"
-                                />
-                            </div>
+                            
                             <button type='submit' className='mt-4 w-full py-[.475rem] leading-[1.5] rounded-lg text-white bg-[#3c8bc6] text-center hover:bg-[#5a9dcf] transition-all flex gap-2 justify-center items-center'>
                                 Gửi báo cáo
                                 <FaChevronRight />
