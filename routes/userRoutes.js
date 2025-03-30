@@ -266,5 +266,6 @@ router.post('/depositRequest',authenticate, userController.depositRequest);
 router.post('/withdrawRequest',authenticate, userController.withdrawRequest);
 
 router.post('/upExp',authenticate, userController.upExp);
+router.get('/checkAction/:id',authenticate, userController.checkAction);
 module.exports = router;
 

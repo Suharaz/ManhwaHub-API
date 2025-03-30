@@ -40,6 +40,7 @@ const getInfo = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
+
 const updateUser = async (req, res) => {
   try {
     if (!req.user) {
@@ -464,6 +465,31 @@ const upExp = async (req, res) => {
   }
 };
 
+const checkAction = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
+
+    const user_id = req.user.id;
+    const comic_id = req.params.id;
+
+    // Kiểm tra nếu user đã follow comic hay chưa
+    const followRecord = await Follow.findOne({
+      where: { user_id, comic_id }
+    });
+
+    const follow = !!followRecord; // Chuyển kết quả thành true/false
+
+    return res.status(200).json({ follow });
+
+  } catch (error) {
+    console.error('Lỗi:', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = { 
   getInfo,
   updateUser, 
@@ -475,5 +501,6 @@ module.exports = {
   buyChapter,
   depositRequest,
   withdrawRequest,
-  upExp
+  upExp,
+  checkAction
 };
