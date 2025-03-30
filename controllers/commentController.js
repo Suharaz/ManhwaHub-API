@@ -1,5 +1,6 @@
 const Comment = require('../models/comments');
 const User = require('../models/user');
+const Notification = require('../models/notifications');
 const Comic = require('../models/comic');
 const { Sequelize } = require('sequelize');
 
@@ -194,6 +195,15 @@ exports.addCommentOrReply = async (req, res) => {
             if (!parentComment) {
                 return res.status(400).json({ status: 'error', message: 'Parent comment not found' });
             }
+            else{
+                await Notification.create({
+                    userId: parentComment.user_id,
+                    title: "Ai đó đã trả lời bình luận của bạn",  
+                    content: content.trim()
+                });
+        
+        
+            }
         }
 
         // Tạo mới comment hoặc reply
@@ -204,6 +214,7 @@ exports.addCommentOrReply = async (req, res) => {
             parent_id: parent_id || null,  // Nếu không có parent_id thì là comment gốc
             content: content.trim()
         });
+
 
         res.status(201).json({
             status: 'success',

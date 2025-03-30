@@ -13,7 +13,7 @@ import type { Metadata } from 'next';
 import Header from "@/components/Header/Guest";
 import Footer from "@/components/Footer";
 import ButtonScroll from "@/components/Button/ScrollToTop";
-import { ListHistories } from "@/components/Client/History";
+// import { ListHistories } from "@/components/Client/History";
 
 // export async function generateMetadata(): Promise<Metadata> {
 //   const data: HomeProp = await getComics();
@@ -64,7 +64,7 @@ export default async function Home() {
   return (
     <>
    
-    <Header />
+    <Header/>
     <main className="bg-gradient-5" itemScope itemType="https://schema.org/WebPage">
       
       
@@ -85,7 +85,7 @@ export default async function Home() {
       <section>
         
         <article className="max-w-[1800px] mx-auto px-[10px]">
-          <div className="grid grid-cols-4 gap-10">
+          <div className="center">
             <div className="col-span-4 xl:col-span-3">
               <div className="mb-2 text-center sm:text-left">
                 <h2 className="text-[30px] w-full justify-center sm:justify-between flex-col sm:flex-row inline-flex items-center font-[900] font-pro-bold text-white uppercase">
@@ -122,6 +122,7 @@ export default async function Home() {
                           </li>
                         ))}
                       </ul>}
+                     
                     </div>
                   </div>
                 ))}
@@ -130,7 +131,6 @@ export default async function Home() {
             </div>
                       </div>
         </article>
-        
       </section>
     </main>
     <Footer />

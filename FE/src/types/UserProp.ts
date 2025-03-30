@@ -6,4 +6,5 @@ export interface UserProp {
     exp: number;
     nextLevel: any;
     level: any;
+    total_point: number;
 }

@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 const authenticate = require('../middleware/auth');
 const { uploadAvatar } = require('../middleware/upload');
 
+
 /**
  * @swagger
  * /api/users/{id}:
@@ -37,6 +38,7 @@ const { uploadAvatar } = require('../middleware/upload');
  *         description: Lỗi máy chủ nội bộ
  */
 router.get('/:id', userController.getInfo);
+
 /**
  * @swagger
  * /api/users/{id}:
@@ -255,7 +257,7 @@ router.get('/:id/comment',authenticate, userController.getCommentByUser);
  *       '500':
  *         description: Lỗi máy chủ nội bộ
  */
-router.post('/:id/history',authenticate, userController.saveHistory);
+router.post('/history',authenticate, userController.saveHistory);
 
 router.post('/buyChapter', authenticate,userController.buyChapter);
 

@@ -164,7 +164,7 @@ router.post('/', authenticate, notiController.createNoti);
  *       '500':
  *         description: Lỗi máy chủ nội bộ
  */
-router.put('/:id/read', authenticate, notiController.markNotificationAsRead);
+router.put('/read', authenticate, notiController.markNotificationAsRead);
 
 /**
  * @swagger

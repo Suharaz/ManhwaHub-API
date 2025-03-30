@@ -55,7 +55,7 @@ function Page() {
             
             {/* Form nạp điểm */}
             <div className="bg-btn border border-btnHover rounded-lg p-6 mb-6">
-                <h3 className="text-white text-xl mb-4">Nạp điểm theo số tiền tùy chọn</h3>
+                <h3 className="text-white text-xl mb-4">Nạp tiền theo số tiền tùy chọn</h3>
                 <form onSubmit={handleSubmitDeposit}>
                     <div className="mb-4">
                         <label htmlFor="amount" className="block text-[#3c8bc6] mb-2">Số tiền muốn nạp (VND)</label>

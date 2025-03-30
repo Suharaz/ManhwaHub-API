@@ -127,4 +127,5 @@ router.put('/:id', authenticate,transactionController.updateTransaction);
 // Delete a transaction by id
 router.delete('/:id',authenticate, transactionController.deleteTransaction);
 
+router.post('/approve/:id/',authenticate, transactionController.approveTransaction);
 module.exports = router;

@@ -254,11 +254,15 @@ function Page() {
                                     </div>
                                     
                                     <div className="col-span-2">
-                                        <span className={`font-semibold ${item.type === 'withdraw' ? 'text-red-500' : 'text-green-500'}`}>
-                                            {item.type === 'withdraw' ? '-' : '+'}{parseFloat(item.amount).toLocaleString()} đ
+                                        <span
+                                            className="font-semibold"
+                                            style={{ color: item.type === 'withdraw' || item.type === 'purchase' ? 'red' : 'green' }}
+                                        >
+                                            {item.type === 'withdraw' || item.type === 'purchase' ? '-' : '+'}{parseFloat(item.amount).toLocaleString()} đ
                                         </span>
                                     </div>
-                                    
+
+                                                                        
                                     <div className="col-span-2 text-[#747c88]">
                                         {difference(item.created_at)}
                                     </div>

@@ -60,7 +60,7 @@ function Dropdown() {
         </Link>
         <Link href={`/user/mua-chap`} className='bg-opacity11x whitespace-nowrap overflow-hidden text-ellipsis py-2 px-4 hover:text-white flex gap-1 items-center font-normal transition-all duration-300'>
             <FaCoins className='text-[0.9rem] w-[1.6rem]' />
-            Lịch sử mua chap
+            Lịch sử giao dịch
         </Link>
         <button onClick={handleLogout} className='w-full whitespace-nowrap overflow-hidden text-ellipsis py-2 px-4 hover:text-white flex gap-1 items-center font-normal transition-all duration-300'>
             <FaArrowsUpDownLeftRight className='text-[0.9rem] w-[1.6rem]' />

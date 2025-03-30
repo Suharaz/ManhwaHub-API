@@ -36,7 +36,7 @@ function SidebarUser() {
                 <li className="max-lg:flex-grow bg-bguser">
                     <Link href="/user/nap-diem" className={`py-[.7rem] ${pathname === '/user/nap-diem' ? 'text-white bg-btnHover' : ''} px-0 hover:bg-btn hover:text-white lg:px-8 flex max-lg:justify-center text-[1.1rem] items-center tracking-[.05rem] transition-all duration-300`}>
                         <FaCoins className="w-[1.7rem]" />
-                        <span className="max-md:hidden">Nạp điểm</span>
+                        <span className="max-md:hidden">Nạp tiền</span>
                     </Link>
                 </li>
                 <li className="max-lg:flex-grow">
@@ -48,7 +48,7 @@ function SidebarUser() {
                 <li className="max-lg:flex-grow bg-bguser">
                     <Link href="/user/mua-chap" className={`py-[.7rem] ${pathname === '/user/mua-chap' ? 'text-white bg-btnHover' : ''} px-0 hover:bg-btn hover:text-white lg:px-8 flex max-lg:justify-center text-[1.1rem] items-center tracking-[.05rem] transition-all duration-300`}>
                         <FaCartArrowDown className="w-[1.7rem]" />
-                        <span className="max-md:hidden">Lịch sử mua chap</span>
+                        <span className="max-md:hidden">Lịch sử giao dịch</span>
                     </Link>
                 </li>
                 <li className="max-lg:flex-grow">

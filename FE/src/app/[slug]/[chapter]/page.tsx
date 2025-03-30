@@ -80,12 +80,14 @@ async function PageRead({ params }: { params: { slug: string, chapter: string } 
 
         return <Pay message={data.message} id={Number(data.currentChapter)} />;
     }
+    console.log("Fetched Data:", data);
 
     return (
         <>
+          
              <ImageComic data={data.data} />
-            {/* <UpView id={data.comic.id} type="comic" />
-            <SaveHistory id={data.comic.id} chapter={data.currentChapter.id} type="comic" /> */}
+            <UpView id={data.data.comics.id} type="comic" />
+            <SaveHistory id={data.data.comics.id} chapter={data.data.currentChapter.id} type="comic" />
        
         </>
     );

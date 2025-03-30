@@ -10,23 +10,23 @@ function DropdownNo() {
   const [notifications, setNotifications] = useState<any>([]);
   const [totalUnread, setTotalUnread] = useState(0);
 
-  // useEffect(() => {
-  //   const fetchNotifications = async () => {
-  //     await axiosClient.get("/baseapi/users/getNotifications")
-  //     .then((response) => {
-  //       setNotifications(response.data.notifications);
-  //       setTotalUnread(response.data.totalUnread);
-  //     });
-  //   };
-  //   fetchNotifications();
-  // }, []);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      await axiosClient.get("/api/notifications/")
+      .then((response) => {
+        setNotifications(response.data.notifications);
+        setTotalUnread(response.data.totalUnread);
+      });
+    };
+    fetchNotifications();
+  }, []);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const handleMarkAllRead = async () => {
-    await axiosClient.get("/baseapi/users/markAllRead")
+    await axiosClient.put("/api/notifications/read")
     .then(() => {
       setTotalUnread(0);
     });

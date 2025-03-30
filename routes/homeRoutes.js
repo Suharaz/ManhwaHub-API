@@ -205,4 +205,6 @@ router.get('/category/:slug', comicController.getComicsByCategory);
  */
 router.get('/author/:slug', comicController.getComicsByAuthor); 
 
+
+
 module.exports = router;

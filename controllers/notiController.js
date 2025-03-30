@@ -3,16 +3,38 @@ const Notification = require('../models/notifications');
 exports.getNotiByUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    const notifications = await Notification.findAll({
+    const { page = 1, limit = 10 } = req.query; // Mặc định page = 1, limit = 10
+
+    const offset = (page - 1) * limit;
+
+    // Lấy danh sách thông báo có phân trang
+    const { count, rows: notifications } = await Notification.findAndCountAll({
       where: { userId },
-      order: [['created_at', 'DESC']]
+      order: [['created_at', 'DESC']],
+      limit: parseInt(limit),
+      offset: parseInt(offset)
     });
-    res.status(200).json(notifications);
+
+    // Đếm số thông báo chưa đọc (status = 0 hoặc false)
+    const totalUnread = await Notification.count({
+      where: { userId, status: 0 }
+    });
+
+    res.status(200).json({
+      total: count,
+      totalUnread, // Số thông báo chưa đọc
+      page: parseInt(page),
+      limit: parseInt(limit),
+      totalPages: Math.ceil(count / limit),
+      notifications
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ message: 'Lỗi máy chủ nội bộ' });
   }
 };
+
+
 
 exports.createNoti = async (req, res) => {
   try {
@@ -46,24 +68,16 @@ exports.createNoti = async (req, res) => {
 
 exports.markNotificationAsRead = async (req, res) => {
   try {
-    const { id } = req.params;
-    const notification = await Notification.findByPk(id);
-    if (!notification) {
-      return res.status(404).json({ message: 'Không tìm thấy thông báo' });
-    }
-    if (notification.userId !== req.user.id) {
-      return res.status(403).json({ message: 'Không có quyền truy cập' });
-    }
-    await notification.update({ status: 1 });
+    const userId = req.user.id; // Lấy userId từ request (đã xác thực)
+
+    // Cập nhật tất cả thông báo có userId này
+    const [updatedCount] = await Notification.update(
+      { status: 1 }, 
+      { where: { userId } }
+    );
     res.status(200).json({
-      message: 'Thông báo đã được đánh dấu là đã đọc',
-      notification: {
-        id: notification.id,
-        userId: notification.userId,
-        title: notification.title,
-        content: notification.content,
-        read: notification.status
-      }
+      message: 'Tất cả thông báo đã được đánh dấu là đã đọc',
+      updatedCount
     });
   } catch (error) {
     res.status(500).json({ message: 'Lỗi máy chủ nội bộ' });

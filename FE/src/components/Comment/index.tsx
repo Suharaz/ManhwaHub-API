@@ -274,7 +274,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                         <div className='flex flex-col'>
                             <div className="flex items-center mt-[8px]">
                                 <div className='flex items-center'>
-                                    <img src={comment.User.avatar || '/default-avatar.png'} className='w-[52px] h-[52px] rounded-[16px]' alt={comment.User.name} />
+                                    <img src={comment.User.avatar || '/assets/images/emo/thobua.gif'} className='w-[52px] h-[52px] rounded-[16px]' alt={comment.User.name} />
                                     <div className={`flex ml-[10px] text-[1rem] leading-[1.5rem] font-semibold`}>
                                         {comment.User.name}
                                     </div>
@@ -291,7 +291,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                     :<div>
                         <div className='flex my-[10px] w-full'>
                             <div className='m-0'>
-                                <img src={comment.User.avatar || '/default-avatar.png'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
+                                <img src={comment.User.avatar || '/assets/images/emo/thobua.gif'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
                             </div>
                             <div className='ml-2 w-full'>
                                 <EditorCustom handleSubmit={() => onEditAction(editingCommentId, editingContent)} edit={true} handleClose={handleCloseEditing} content={editingContent} setContent={setEditingContent} />
@@ -301,7 +301,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                     {replyingToCommentId === comment.id && <div>
                         <div className='flex my-[10px] w-full'>
                             <div className='m-0'>
-                                <img src={user?.avatar || '/default-avatar.png'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
+                                <img src={user?.avatar || '/assets/images/emo/thobua.gif'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
                             </div>
                             <div className='ml-2 w-full'>
                                 <EditorCustom handleSubmit={() => onSubmitAction(replyContent)} content={replyContent} setContent={setReplyContent} />
@@ -314,7 +314,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                             <div className='flex flex-col'>
                                 <div className="flex items-center mt-[8px]">
                                     <div className='flex items-center'>
-                                        <img src={reply.User.avatar || '/default-avatar.png'} className='w-[52px] h-[52px] rounded-[16px]' alt={reply.User.name} />
+                                        <img src={reply.User.avatar || '/assets/images/emo/thobua.gif'} className='w-[52px] h-[52px] rounded-[16px]' alt={reply.User.name} />
                                         <div className={`flex ml-[10px] text-[16px] leading-[1.5rem] font-semibold`}>
                                         {reply.User.name}
                                         </div>
@@ -331,7 +331,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                         <div>
                             <div className='flex my-[10px] w-full'>
                                 <div className='m-0'>
-                                    <img src={reply.User.avatar || '/default-avatar.png'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
+                                    <img src={reply.User.avatar || '/assets/images/emo/thobua.gif'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
                                 </div>
                                 <div className='ml-2 w-full'>
                                     <EditorCustom handleSubmit={() => onEditAction(editingCommentId, editingContent)} edit={true} handleClose={handleCloseEditing} content={editingContent} setContent={setEditingContent} />
@@ -341,7 +341,7 @@ function CommentTemplate({id, type, bg = false, chapter_id = null} : {id: number
                         {replyingToCommentId === reply.id && <div>
                         <div className='flex my-[10px] w-full'>
                             <div className='m-0'>
-                                <img src={reply.User.avatar || '/default-avatar.png'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
+                                <img src={reply.User.avatar || '/assets/images/emo/thobua.gif'} className='w-[52px] h-[52px] rounded-[16px]' alt="" />
                             </div>
                             <div className='ml-2 w-full'>
                                 <EditorCustom handleSubmit={() => onSubmitAction(replyContent)} content={replyContent} setContent={setReplyContent} />

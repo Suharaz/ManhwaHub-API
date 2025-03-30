@@ -48,7 +48,7 @@ function ItemComic({comic}: {comic: ComicProp}) {
             {comic.Chapters && comic.Chapters.length > 0 && <ul className="mt-4">
                 {comic.Chapters.map((chapter) => (
                     <li key={chapter.id}>
-                        <Link className="bg-[#141d2c] rounded-full flex justify-between text-[.9rem] mt-[.3rem] py-[.2rem] px-[.8rem] hover:text-white hover:bg-[#111925] text-[#747c88] overflow-hidden transition-all duration-300" href={`${process.env.NEXT_PUBLIC_BASE_URL}/${comic.slug}/${chapter.slug}`}>
+                        <Link className="bg-[#141d2c] rounded-full flex justify-between text-[.9rem] mt-[.3rem] py-[.2rem] px-[.8rem] hover:text-white hover:bg-[#111925] text-[#747c88] overflow-hidden transition-all duration-300" href={`${process.env.NEXT_PUBLIC_BASE_URL}/${comic.slug}/${chapter.id}`}>
                             <span className="whitespace-nowrap"> {chapter.name}</span>
                             {chapter.price !== 0 && <i className="text-yellowPrimary text-sm flex gap-1 items-center ml-2">{chapter.price}<FaBitcoin /></i>}
                             <span className="whitespace-nowrap max-ssm:pl-5 text-ellipsis overflow-hidden">{difference(chapter.updated_at)}</span>

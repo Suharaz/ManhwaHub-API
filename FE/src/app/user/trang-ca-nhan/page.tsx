@@ -7,7 +7,7 @@ import axiosClient from "@/libs/axiosClient";
 import { UserProp } from "@/types/UserProp";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaCheck, FaKey } from "react-icons/fa";
+import { FaCheck, FaKey,FaBitcoin } from "react-icons/fa";
 
 function Page() {
     const [name, setName] = useState('');
@@ -136,7 +136,14 @@ function Page() {
                             {data.nextLevel ? data.exp / data.nextLevel.experience * 100 : '100'}%
                         </span>
                     </div>
-                </div>}
+                    <div className="mt-4 text-white"></div>
+                    <div className="mt-0.5 text-white">Số dư</div>
+                    <div className="flex items-center gap-1 text-white w-full text-[1rem] px-3 py-[.475rem] font-normal leading-[1.5] bg-[#141d2c] rounded-lg border border-[#1e2c43] transition-all duration-300 focus:outline-none focus:text-white focus:border-[#9fc6e3] focus:shadow-10">
+                        <span>{data.total_point ? data.total_point : '0'}</span>
+                        <FaBitcoin className="text-yellow-500" />
+                    </div>
+
+                    </div>}
                 {messageError !== "" && <div className="mb-4 text-[#721c24] bg-[#f8d7da] relative py-3 px-5 rounded-lg">
                     <button onClick={handleClose} type="button" className="float-right text-[1.5rem] leading-none font-bold text-[#000] opacity-50">
                         <span>x</span>
@@ -153,10 +160,11 @@ function Page() {
                         {messageSuccess}
                     </div>
                 </div>}
-                <div className="mb-4">
+
+                <div className="mb-4">Username
                     <input type="text" placeholder="Nhập tên của bạn" value={name} onChange={(e) => setName(e.target.value)} className="block text-white w-full text-[1rem] px-3 py-[.475rem] font-normal leading-[1.5] bg-[#141d2c] rounded-lg border border-[#1e2c43] transition-all duration-300 focus:outline-none focus:text-white focus:border-[#9fc6e3] focus:shadow-10" />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4">Email
                     <input type="email" placeholder="Nhập email" value={email} onChange={(e) => setEmail(e.target.value)} className="block text-white w-full text-[1rem] px-3 py-[.475rem] font-normal leading-[1.5] bg-[#141d2c] rounded-lg border border-[#1e2c43] transition-all duration-300 focus:outline-none focus:text-white focus:border-[#9fc6e3] focus:shadow-10" />
                 </div>
                 <button onClick={() => setIsOpen(!isOpen)} type="button" className="text-[#8f96a0] flex gap-1 items-center hover:text-white transition-all duration-300">

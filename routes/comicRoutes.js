@@ -285,4 +285,5 @@ router.delete('/:id/unfollow', comicController.unfollowComic);
  */
 router.put('/:id/rating', comicController.rateComic);
 
+router.put('/:id/upView', comicController.upViewComic);
 module.exports = router;

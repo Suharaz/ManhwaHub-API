@@ -13,6 +13,7 @@ import { ToastContainer, Zoom } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { UserProp } from "@/types/UserProp";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { difference, formatDate } from "@/utils/date";
 
 function Page() {
     const [user, setUser] = useLocalStorage<UserProp | null>('user', null);
@@ -50,9 +51,7 @@ function Page() {
     }
 
     const handleRemove = (id: number) => {
-        axiosClient.post('/baseapi/users/follow',{
-            id,
-        }).then((res) => {
+        axiosClient.delete(`/api/comics/${id}/unfollow`).then((res) => {
             setReload(!reload);
             showToast(res.data.message, {type: "success"});
         });
@@ -89,13 +88,13 @@ function Page() {
                                     <div className="mt-[.3rem] flex items-center mb-[.6rem]">
                                         <span className="text-[.9rem] text-[#3c8bc6]">{renderStatus(item.comic.status || 0)}</span>
                                     </div>
-                                    <Link href={`/${item.comic.slug || item.comic.id}`} className="text-white overflow-hidden text-ellipsis whitespace-nowrap block text-[1.05rem] transition-all duration-300">
+                                    <Link href={`/${item.comic.slug }`} className="text-white overflow-hidden text-ellipsis whitespace-nowrap block text-[1.05rem] transition-all duration-300">
                                         {item.comic.name}
                                     </Link>
                                     {latestChapter && (
                                         <p className="mt-[.4rem] text-[.9rem] text-[#3c8bc6] hover:text-white transition-all duration-300">
-                                            <Link href={`/${item.comic.slug || item.comic.id}/${getChapterSlug(latestChapter.chapter_number)}`}>
-                                                Chapter {latestChapter.chapter_number}
+                                            <Link href={`/${item.comic.slug || item.comic.id}/${latestChapter.id}`}>
+                                                Chapter {latestChapter.chapter_number} - {difference(latestChapter.updated_at)}
                                             </Link>
                                         </p>
                                     )}

@@ -13,7 +13,7 @@ const getInfo = async (req, res) => {
         const user = await User.findByPk(req.params.id, {
             attributes: [
                 'id', 'name', 'email',  'exp', 'avatar', 
-                // 'total_point'
+                'total_point'
                ]
         });
   
@@ -40,10 +40,11 @@ const getInfo = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 }
-
-
 const updateUser = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
     const { id } = req.params;
     const { name, email, password } = req.body;
 
@@ -85,7 +86,9 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-      
+      if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+      }
       if (req.user.role_id !== 2) {
         return res.status(403).json({ message: "Only admin can delete users" });
       }
@@ -110,6 +113,9 @@ const deleteUser = async (req, res) => {
   
 const getFollowByUser = async (req, res) => {
   try {
+      if (!req.user) {
+        return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+      }
       const userId = req.user.id; // Lấy ID user từ token
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 15;
@@ -121,7 +127,8 @@ const getFollowByUser = async (req, res) => {
           where: { user_id: userId },
           include: [{
               model: Comic,
-              attributes: ['id', 'name', 'thumbnail'],
+              attributes: ['id', 'name', 'thumbnail', 'slug', 'updated_at'],
+              order: [['updated_at', 'DESC']],
               include: [{
                   model: Chapter,
                   attributes: ['id', 'chapter_number'],
@@ -158,6 +165,9 @@ const getFollowByUser = async (req, res) => {
 
 const getHistoryByUser = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
     const userId = req.user.id;
 
     const history = await History.findAll({
@@ -191,8 +201,13 @@ res.status(200).json({
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
+
+
 const getCommentByUser = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
     const userId = req.user.id;
 const comments = await Comment.findAll({
   where: { user_id: userId },
@@ -229,18 +244,26 @@ res.status(200).json({
 
 const saveHistory = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
+
     const { comicId, chapterId } = req.body;
     const userId = req.user.id;
+
     if (!userId || !comicId || !chapterId) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    // Kiểm tra xem đã có bản ghi chưa
     let existingHistory = await History.findOne({
       where: { user_id: userId, comic_id: comicId }
     });
+
+    let listChapter = [];
+
     if (existingHistory) {
       // Chuyển list_chapter từ TEXT -> Mảng JSON
-      let listChapter = [];
       if (existingHistory.list_chapter) {
         try {
           listChapter = JSON.parse(existingHistory.list_chapter);
@@ -248,26 +271,24 @@ const saveHistory = async (req, res) => {
           console.error("Error parsing list_chapter:", error);
         }
       }
-
-      // Nếu chapter chưa có trong danh sách, thêm vào
-      if (!listChapter.includes(chapterId)) {
-        listChapter.push(chapterId);
-      }
-
-      // Cập nhật history
-      await existingHistory.update({
-        list_chapter: JSON.stringify(listChapter), // Chuyển lại thành TEXT
-        updated_at: new Date()
-      });
-    } else {
-      
-      await History.create({
-        user_id: userId,
-        comic_id: comicId,
-        chapter_id: chapterId,
-        list_chapter: JSON.stringify([chapterId]) 
-      });
     }
+
+    // Thêm chapter mới vào danh sách (nếu chưa có)
+    if (!listChapter.includes(chapterId)) {
+      listChapter.push(chapterId);
+    }
+
+    // Loại bỏ trùng lặp (nếu có) và chuyển thành JSON string
+    listChapter = [...new Set(listChapter)];
+
+    // Sử dụng upsert để đảm bảo không có dòng nào trùng `comic_id` và `user_id`
+    await History.upsert({
+      user_id: userId,
+      comic_id: comicId,
+      chapter_id: chapterId,
+      list_chapter: JSON.stringify(listChapter), // Chuyển lại thành TEXT
+      updated_at: new Date()
+    });
 
     res.status(200).json({ message: "success" });
   } catch (error) {
@@ -276,8 +297,12 @@ const saveHistory = async (req, res) => {
   }
 };
 
+
 const buyChapter = async (req, res) => {
-  const { chapter_id} = req.body;
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+  }
+  const { chapter_id } = req.body;
   const buyer_id = req.user.id;
 
   try {
@@ -326,8 +351,18 @@ const buyChapter = async (req, res) => {
       type: 'purchase',
       amount: chapter.price,
       status: 'completed',
-      description: `Purchased chapter ${chapter_id}`
+      description: `Bạn mua chapter id:  ${chapter_id}`
     });
+
+    await Transaction.create({
+      user_id: author.id,
+      type: 'deposit',
+      amount: chapter.price,
+      status: 'completed',
+      description: `Có người mua chapter id: ${chapter_id}`
+    });
+
+
 
     await Purchase.create({
       user_id: buyer_id,
@@ -345,6 +380,9 @@ const buyChapter = async (req, res) => {
 
 const depositRequest = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
     const { amount } = req.body;
     const user_id=req.user.id
 
@@ -374,8 +412,11 @@ const depositRequest = async (req, res) => {
 
 const withdrawRequest = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
     const { amount } = req.body;
-    const user_id = req.user.id; 
+    const user_id = req.user.id;
 
     if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: "Số tiền phải là một số dương hợp lệ." });
@@ -402,7 +443,10 @@ const withdrawRequest = async (req, res) => {
 
 const upExp = async (req, res) => {
   try {
-    const user_id = req.user.id; 
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
+    }
+    const user_id = req.user.id;
 
     const user = await User.findByPk(user_id, {
       attributes: ["id", "exp"],

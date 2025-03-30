@@ -15,17 +15,17 @@ function Page() {
     const router = useRouter();
 
     useEffect(() => {
-        // const fetchData = async () => {
-        //     await axiosClient.get('/baseapi/users/getAllNotifications?page=' + currentPage)
-        //         .then(res => {
-        //             setData(res.data.notifications);
-        //             setCurrentPage(res.data.notifications.current_page);
-        //         })
-        //         .catch(() => {
-        //             router.push('/');
-        //         });
-        // }
-        // fetchData();
+        const fetchData = async () => {
+            await axiosClient.get('/api/notifications/?page=' + currentPage)
+                .then(res => {
+                    setData(res.data);
+                    setCurrentPage(res.data.page);
+                })
+                .catch(() => {
+                    router.push('/');
+                });
+        }
+        fetchData();
     }, [currentPage]);
 
     const handlePageChange = (page: number) => {
@@ -33,7 +33,7 @@ function Page() {
     }
 
     const handleMarkAllAsRead = async () => {
-        await axiosClient.get('/baseapi/users/markAllRead')
+        await axiosClient.put('/api/notifications/read')
             .then(() => {
                 window.location.reload();
             });
@@ -48,31 +48,39 @@ function Page() {
                 </button>
             </div>
             <div>
-                {data && data.data && data.data.length > 0 && data.data.map((item: any, index: number) => ( 
-                item.link ? <Link href={item.link} key={index} className={`${index % 2 === 0 ? 'bg-opacity11x' : ''} ${item.status === 'unread' ? '' : 'opacity-70 grayscale'} hover:bg-[#1e2c43] flex items-center relative p-4 w-full transition-all duration-300`}>
+                {data && data.notifications && data.notifications.length > 0 && data.notifications.map((item: any, index: number) => ( 
+                item.link ? <Link href={item.link} key={index} className={`${index % 2 === 0 ? 'bg-opacity11x' : ''} ${!item.status ? '' : 'opacity-70 grayscale'} hover:bg-[#1e2c43] flex items-center relative p-4 w-full transition-all duration-300`}>
                     <div className="flex-grow w-full">
                         <h6 className="transition-all duration-300 w-full hover:text-white text-[1rem] font-semibold line-clamp-1 text-ellipsis leading-[1.5rem] text-[#c6cacf]">
                             {item.title}
                         </h6>
-                        <span className="text-[#3c8bc6] text-[13px]">
-                            {item.content}
-                        </span>
+                        <div className="text-[13px]">
+                            <span className="text-[#747c88]">Nội dung: </span>
+                            <span 
+                                className="text-[#3c8bc6]"
+                                dangerouslySetInnerHTML={{ __html: item.content }}
+                            />
+                        </div>
                         <p className="text-[.95rem] text-[#747c88]">{difference(item.created_at)}</p>
                     </div>
                 </Link>
-                : <span key={index} className={`${index % 2 === 0 ? 'bg-opacity11x' : ''} ${item.status === 'unread' ? '' : 'opacity-70 grayscale'} hover:bg-[#1e2c43] flex items-center relative p-4 w-full transition-all duration-300`}>
+                : <span key={index} className={`${index % 2 === 0 ? 'bg-opacity11x' : ''} ${!item.status ? '' : 'opacity-70 grayscale'} hover:bg-[#1e2c43] flex items-center relative p-4 w-full transition-all duration-300`}>
                     <div className="flex-grow w-full">
                         <h6 className="transition-all duration-300 w-full hover:text-white text-[1rem] font-semibold line-clamp-1 text-ellipsis leading-[1.5rem] text-[#c6cacf]">
                             {item.title}
                         </h6>
-                        <span className="text-[#3c8bc6] text-[13px]">
-                            {item.content}
-                        </span>
+                        <div className="text-[13px]">
+                            <span className="text-[#747c88]">Nội dung: </span>
+                            <span 
+                                className="text-[#3c8bc6]"
+                                dangerouslySetInnerHTML={{ __html: item.content }}
+                            />
+                        </div>
                         <p className="text-[.95rem] text-[#747c88]">{difference(item.created_at)}</p>
                     </div>
                 </span>
                 ))}
-                {data && data.data.length !== 0 && <PaginateComic currentPage={currentPage} totalPage={data.last_page} onPageChangeCustom={handlePageChange} />}
+                {data && data.notifications.length !== 0 && <PaginateComic currentPage={currentPage} totalPage={data.totalPages} onPageChangeCustom={handlePageChange} />}
             </div>
         </div>
     );

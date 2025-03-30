@@ -5,6 +5,7 @@ const Translator = require('../models/translator');
 const Vote = require('../models/vote');
 const Follow=require('../models/follow');
 const { Sequelize } = require('sequelize');
+const moment = require('moment');
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 600 });
 
@@ -355,4 +356,56 @@ exports.getRatingByComic = async (req, res) => {
         res.status(500).json({ status: 'error', message: 'Error getting ratings', error });
     }
 };
+
+exports.upViewComic = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const comic = await Comic.findByPk(id);
+
+        if (!comic) {
+            return res.status(404).json({ status: 'error', message: 'Comic not found' });
+        }
+
+        // Lấy ngày hiện tại, ngày đầu tuần, ngày đầu tháng
+        const today = moment().format('YYYY-MM-DD');
+        const firstDayOfWeek = moment().startOf('isoWeek').format('YYYY-MM-DD');
+        const firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+
+        // Kiểm tra lần cuối cập nhật
+        const lastViewedDate = moment(comic.upview_at).format('YYYY-MM-DD');
+
+        // Tăng tổng lượt xem
+        await comic.increment('view_total');
+
+        // Cập nhật lượt xem theo ngày
+        if (lastViewedDate !== today) {
+            await comic.update({ view_day: 1 });
+        } else {
+            await comic.increment('view_day');
+        }
+
+        // Cập nhật lượt xem theo tuần
+        if (moment(comic.upview_at).isBefore(firstDayOfWeek)) {
+            await comic.update({ view_week: 1 });
+        } else {
+            await comic.increment('view_week');
+        }
+
+        // Cập nhật lượt xem theo tháng
+        if (moment(comic.upview_at).isBefore(firstDayOfMonth)) {
+            await comic.update({ view_month: 1 });
+        } else {
+            await comic.increment('view_month');
+        }
+
+        // Cập nhật thời gian xem cuối cùng
+        await comic.update({ upview_at: new Date() });
+
+        return res.status(200).json({ status: 'success', message: 'View count updated' });
+    } catch (error) {
+        console.error('Error updating view count:', error);
+        return res.status(500).json({ status: 'error', message: 'Error updating view count', error });
+    }
+};
+
 

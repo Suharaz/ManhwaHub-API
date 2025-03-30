@@ -156,7 +156,12 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
                             />
                         )}
                         <div className="relative z-[5]">
-                            <form action="/tim-kiem-nang-cao" className="flex items-center z-[6] h-[2.6rem] relative bg-btn rounded-[50rem] pl-[.8rem] transition-all border border-mainSec" autoComplete="off">
+                            <form onSubmit={(e) => {
+                                e.preventDefault();
+                                if (search.trim()) {
+                                    window.location.href = `/tim-kiem-nang-cao/${search}`;
+                                }
+                            }} className="flex items-center z-[6] h-[2.6rem] relative bg-btn rounded-[50rem] pl-[.8rem] transition-all border border-mainSec" autoComplete="off">
                                 <CiSearch className="text-white" size={22} />
                                 <input 
                                     value={search} 
@@ -190,12 +195,8 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
                                                             {item.name}
                                                         </h6>
                                                         <div>
-                                                            <span className="text-[.95rem] text-[#747c88] inline-flex items-center after:content-[''] after:block after:w-[2px] after:h-[2px] after:mx-[.4rem] after:bg-[#747c88]">
-                                                                {renderStatus(item.status)}
-                                                            </span>
-                                                            <span className="text-[.95rem] text-[#747c88] inline-flex items-center">
-                                                                 {item.Chapters.name}
-                                                            </span>
+                                                           
+                                                           
                                                         </div>
                                                     </div>
                                                 </Link>
@@ -203,7 +204,7 @@ function Header({read = false, handle, active = false, page = 1, chapter, totalP
 
                                 </div>
                                 <div className="p-4">
-                                    <Link href={`/tim-kiem-nang-cao`} className="w-full text-white bg-[#3c8bc6] hover:bg-[#5a9dcf] inline-block font-normal text-center select-none py-[.475rem] px-3 text-[1rem] transition-all rounded-lg">
+                                    <Link href={`/tim-kiem-nang-cao/${search}`} className="w-full text-white bg-[#3c8bc6] hover:bg-[#5a9dcf] inline-block font-normal text-center select-none py-[.475rem] px-3 text-[1rem] transition-all rounded-lg">
                                         <span>Xem tất cả kết quả</span>
                                     </Link>
                                 </div>
