@@ -46,44 +46,59 @@ const updateUser = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
     }
-    const { id } = req.params;
-    const { name, email, password } = req.body;
 
-    // Kiểm tra quyền truy cập
+    const { id } = req.params;
+    let { name, email, password, role_id } = req.body;
     if (req.user.id !== parseInt(id) && req.user.role_id !== 2) {
       return res.status(403).json({ message: "Access denied" });
     }
-
-    // Tạo đối tượng dữ liệu cần cập nhật
     const updatedData = {};
     if (name) updatedData.name = name;
-    if (email) updatedData.email = email;
-    if (password) updatedData.password = bcrypt.hashSync(password, 10);
-    
-    // Xử lý avatar nếu có file được upload
+    if (email) {
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser && existingUser.id !== parseInt(id)) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      updatedData.email = email;
+    }
+    if (password) {
+      updatedData.password = await bcrypt.hash(password, 10);
+    }
+
+    if (role_id !== undefined) {
+      if (req.user.role_id === 2) {
+        updatedData.role_id = role_id;
+      } else {
+        return res.status(403).json({ message: "You do not have permission to update role_id" });
+      }
+    }
     if (req.file) {
       updatedData.avatar = `/uploads/avatars/${req.file.filename}`;
     }
-
-    // Cập nhật user
+    if (Object.keys(updatedData).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
     const [updated] = await User.update(updatedData, { where: { id } });
 
     if (!updated) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Lấy user đã cập nhật
-    const updatedUser = await User.findByPk(id);
-    
-    res.json({ 
-      message: "User updated successfully",
-      user: updatedUser 
+    const updatedUser = await User.findByPk(id, {
+      attributes: ['id', 'name', 'email', 'avatar', 'role_id']
     });
+
+    res.json({
+      message: "User updated successfully",
+      user: updatedUser
+    });
+
   } catch (error) {
     console.error("Update User Error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 const deleteUser = async (req, res) => {
     try {
