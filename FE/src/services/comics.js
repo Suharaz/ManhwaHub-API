@@ -2,11 +2,11 @@ import { getAuthToken } from "@/hooks/useAuth";
 
 let baseUrl = process.env.NEXT_PUBLIC_BASE_API + '/api';
 
-let option = { next: {revalidate: 1000, tags: ['Comics']} };
+let option = { next: {revalidate: 10, tags: ['Comics']} };
 let optionNoStore = { cache: 'no-store' };
 
 export async function getComics() {
-  const response = await fetch(baseUrl + '/home', option);
+  const response = await fetch(baseUrl + '/home', optionNoStore);
   const data = await response.json();
   return data;
 }

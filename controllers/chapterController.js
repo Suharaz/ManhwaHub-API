@@ -113,13 +113,13 @@ const getChapter = async (req, res) => {
         // Check mua nếu chapter có giá
         if (currentChapter.price > 0) {
             if (!req.user) {
-                return res.status(401).json({ status: 'info', message: 'You need to log in to access this chapter', currentChapter: id });
+                return res.status(401).json({ status: 'info', message: 'Đanwg nhập để mua chap', currentChapter: id });
             }
             const hasPurchased = await Purchase.findOne({
                 where: { user_id: req.user.id, chapter_id: id },
             });
             if (!hasPurchased) {
-                return res.status(403).json({ status: 'info', message: 'You need to purchase this chapter', currentChapter: id });
+                return res.status(403).json({ status: 'info', message: 'Mua chap để đọc nha bạn', currentChapter: id });
             }
         }
 

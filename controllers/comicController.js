@@ -374,34 +374,44 @@ exports.upViewComic = async (req, res) => {
         // Kiểm tra lần cuối cập nhật
         const lastViewedDate = moment(comic.upview_at).format('YYYY-MM-DD');
 
-        // Tăng tổng lượt xem
-        await comic.increment('view_total');
+        // Các field cần update
+        const updateFields = {};
 
-        // Cập nhật lượt xem theo ngày
+        // Tổng lượt xem +1
+        updateFields.view_total = comic.view_total + 1;
+
+        // View theo ngày
         if (lastViewedDate !== today) {
-            await comic.update({ view_day: 1 });
+            updateFields.view_day = 1;
         } else {
-            await comic.increment('view_day');
+            updateFields.view_day = comic.view_day + 1;
         }
 
-        // Cập nhật lượt xem theo tuần
+        // View theo tuần
         if (moment(comic.upview_at).isBefore(firstDayOfWeek)) {
-            await comic.update({ view_week: 1 });
+            updateFields.view_week = 1;
         } else {
-            await comic.increment('view_week');
+            updateFields.view_week = comic.view_week + 1;
         }
 
-        // Cập nhật lượt xem theo tháng
+        // View theo tháng
         if (moment(comic.upview_at).isBefore(firstDayOfMonth)) {
-            await comic.update({ view_month: 1 });
+            updateFields.view_month = 1;
         } else {
-            await comic.increment('view_month');
+            updateFields.view_month = comic.view_month + 1;
         }
 
         // Cập nhật thời gian xem cuối cùng
-        await comic.update({ upview_at: new Date() });
+        updateFields.upview_at = new Date();
+
+        // Cập nhật tất cả chỉ trong 1 câu SQL, không đụng updated_at
+        await Comic.update(updateFields, {
+            where: { id },
+            silent: true
+        });
 
         return res.status(200).json({ status: 'success', message: 'View count updated' });
+
     } catch (error) {
         console.error('Error updating view count:', error);
         return res.status(500).json({ status: 'error', message: 'Error updating view count', error });

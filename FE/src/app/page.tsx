@@ -13,54 +13,10 @@ import type { Metadata } from 'next';
 import Header from "@/components/Header/Guest";
 import Footer from "@/components/Footer";
 import ButtonScroll from "@/components/Button/ScrollToTop";
-// import { ListHistories } from "@/components/Client/History";
-
-// export async function generateMetadata(): Promise<Metadata> {
-//   const data: HomeProp = await getComics();
-//   const meta = data.meta;
-
-//   return {
-//     metadataBase: new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/`),
-//     title: meta.title,
-//     description: meta.description,
-//     keywords: meta.keywords,
-//     authors: [{name: meta.Author}],
-//     referrer: 'origin-when-cross-origin',
-//     openGraph: {
-//       siteName: meta.site_name,
-//       type: 'website',
-//       locale: "vi_VN",
-//       url: '/',
-//       images: ['/logo.png'],
-//     },
-//     alternates: {
-//       canonical: '/',
-//     },
-//     robots: {
-//       index: true,
-//       follow: true,
-//       nocache: true,
-//       googleBot: {
-//         index: true,
-//         follow: false,
-//         noimageindex: true,
-//         'max-video-preview': -1,
-//         'max-image-preview': 'large',
-//         'max-snippet': -1,
-//       },
-//     }
-//   }
-// }
 
 export default async function Home() {
   const data: HomeProp = await getComics();
-  // const jsonLd = {
-  //   "@context": "https://schema.org",
-  //   "@type": "WebSite",
-  //   "url": process.env.NEXT_PUBLIC_BASE_URL,
-  //   "name": data.meta.title,
-  //   "description": data.meta.description,
-  // }
+  
   return (
     <>
    

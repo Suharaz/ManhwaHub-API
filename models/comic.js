@@ -74,6 +74,10 @@ const Comic = sequelize.define('Comic', {
         type: DataTypes.DATE,
         allowNull: true,
     },
+    upview_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
 }, {
     tableName: 'comics',
     timestamps: true,
