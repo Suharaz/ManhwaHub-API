@@ -147,7 +147,7 @@ const getFollowByUser = async (req, res) => {
               order: [['updated_at', 'DESC']],
               include: [{
                   model: Chapter,
-                  attributes: ['id', 'chapter_number'],
+                  attributes: ['id', 'chapter_number','updated_at'],
                   order: [['chapter_number', 'DESC']],
                   limit: 1,
                   separate: true // Đảm bảo lấy đúng 1 chapter mới nhất
@@ -224,34 +224,41 @@ const getCommentByUser = async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ success: false, message: 'Unauthorized - Please login first' });
     }
+
     const userId = req.user.id;
-const comments = await Comment.findAll({
-  where: { user_id: userId },
-  attributes: ['id', 'user_id', 'comic_id', 'chapter_id', 'content', 'parent_id', 'created_at', 'updated_at'],
-  include: [{
-    model: Comic,
-    attributes: ['name','thumbnail', 'slug']
-  }],
-  order: [['updated_at', 'DESC']],
-});
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
 
-const total = await Comment.count({ where: { user_id: userId } });
-const page = parseInt(req.query.page) || 1;
-const limit = parseInt(req.query.limit) || 10;
-const totalPages = Math.ceil(total / limit);
-
-res.status(200).json({ 
-  success: true, 
-  data: { 
-    comments,
-    pagination: {
-      total,
-      page,
+    // Lấy comment có phân trang
+    const comments = await Comment.findAll({
+      where: { user_id: userId },
+      attributes: ['id', 'user_id', 'comic_id', 'chapter_id', 'content', 'parent_id', 'created_at', 'updated_at'],
+      include: [{
+        model: Comic,
+        attributes: ['name', 'thumbnail', 'slug']
+      }],
+      order: [['updated_at', 'DESC']],
       limit,
-      totalPages
-    }
-  } 
-});
+      offset
+    });
+
+    // Tổng số comment
+    const total = await Comment.count({ where: { user_id: userId } });
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        comments,
+        pagination: {
+          total,
+          page,
+          limit,
+          totalPages
+        }
+      }
+    });
   } catch (error) {
     console.error('Get Comment History Error:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });

@@ -225,7 +225,7 @@ exports.unfollowComic = async (req, res) => {
         if (!follow) {
             return res.status(400).json({
                 status: 'error',
-                message: 'You are not following this comic',
+                message: 'bạn chưa theo dõi truyện này',
             });
         }
 
@@ -234,7 +234,7 @@ exports.unfollowComic = async (req, res) => {
 
         res.status(200).json({
             status: 'success',
-            message: 'Comic unfollowed successfully',
+            message: 'Bỏ theo dõi truyện thành công',
         });
     } catch (error) {
         console.error('Error unfollowing comic:', error);

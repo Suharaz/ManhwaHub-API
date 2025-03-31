@@ -16,6 +16,8 @@ function Page() {
     const [user, setUser] = useLocalStorage<UserProp | null>('user', null);
     const [file, setFile] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
+    const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+    const [withdrawAmount, setWithdrawAmount] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [messageError, setMessageError] = useState('');
@@ -142,8 +144,69 @@ function Page() {
                         <span>{data.total_point ? data.total_point : '0'}</span>
                         <FaBitcoin className="text-yellow-500" />
                     </div>
-
                     </div>}
+                    
+                {/* Withdraw Button and Modal - Outside the form */}
+                {data && (
+                    <div className="mb-4">
+                        <button 
+                            type="button"
+                            onClick={() => setWithdrawModalOpen(true)}
+                            className="w-full px-4 py-2 text-[1rem] leading-[1.5] rounded-lg bg-btn1 border text-white hover:bg-btn2 hover:border-btn2 border-btn1 transition-all duration-300"
+                        >
+                            Rút tiền
+                        </button>
+                    </div>
+                )}
+
+                {/* Withdraw Modal */}
+                {withdrawModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-[#141d2c] p-6 rounded-lg w-[90%] max-w-[400px]">
+                            <h3 className="text-white text-xl mb-4">Rút tiền</h3>
+                            <input
+                                type="number"
+                                value={withdrawAmount}
+                                onChange={(e) => setWithdrawAmount(e.target.value)}
+                                placeholder="Nhập số tiền muốn rút"
+                                className="block text-white w-full text-[1rem] px-3 py-[.475rem] font-normal leading-[1.5] bg-[#1e2c43] rounded-lg border border-[#1e2c43] transition-all duration-300 focus:outline-none focus:text-white focus:border-[#9fc6e3] focus:shadow-10 mb-4"
+                            />
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setWithdrawModalOpen(false);
+                                        setWithdrawAmount('');
+                                    }}
+                                    className="px-4 py-2 text-[1rem] leading-[1.5] rounded-lg border border-[#1e2c43] text-white hover:bg-[#1e2c43] transition-all duration-300"
+                                >
+                                    Hủy
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (!withdrawAmount || parseInt(withdrawAmount) <= 0) {
+                                            setMessageError('Vui lòng nhập số tiền hợp lệ');
+                                            return;
+                                        }
+                                        axiosClient.post('/api/user/withdrawRequest', { amount: parseInt(withdrawAmount) })
+                                            .then((res) => {
+                                                setMessageSuccess(res.data.message);
+                                                setWithdrawModalOpen(false);
+                                                setWithdrawAmount('');
+                                            })
+                                            .catch((err) => {
+                                                setMessageError(err.response.data.error);
+                                            });
+                                    }}
+                                    className="px-4 py-2 text-[1rem] leading-[1.5] rounded-lg bg-btn1 border text-white hover:bg-btn2 hover:border-btn2 border-btn1 transition-all duration-300"
+                                >
+                                    Xác nhận
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {messageError !== "" && <div className="mb-4 text-[#721c24] bg-[#f8d7da] relative py-3 px-5 rounded-lg">
                     <button onClick={handleClose} type="button" className="float-right text-[1.5rem] leading-none font-bold text-[#000] opacity-50">
                         <span>x</span>
